@@ -1,0 +1,56 @@
+# Build outputs
+**/bin/
+**/obj/
+
+# IDE and editor files
+**/.vs/
+**/.vscode/
+**/*.swp
+**/*.swo
+**/*~
+
+# Git
+**/.git
+**/.gitignore
+
+# Docker files (to avoid copying into image)
+**/Dockerfile*
+**/docker-compose*
+**/.dockerignore
+
+# OS generated files
+**/.DS_Store
+**/Thumbs.db
+
+# Logs and temporary files
+**/*.log
+**/*.tmp
+**/logs/
+
+# NuGet packages
+**/packages/
+
+# Test results
+**/TestResults/
+**/coverage/
+
+# Node modules (if any)
+**/node_modules/
+
+# User-specific files
+**/*.user
+**/*.suo
+
+# Build artifacts
+**/artifacts/
+**/publish/
+
+# Environment files
+**/.env
+**/appsettings.Development.json
+
+# Documentation and misc
+**/README.md
+**/HowToRun.txt
+**/LICENSE
+**/ArticlePlan/
