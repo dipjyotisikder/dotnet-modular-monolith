@@ -1,0 +1,87 @@
+namespace Shared.Infrastructure.Configuration;
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Shared.Infrastructure.Middleware;
+
+public static class ApiInfrastructureExtensions
+{
+    public static IServiceCollection AddApiInfrastructure(this IServiceCollection services)
+    {
+        services.AddEndpointsApiExplorer();
+        services.AddRateLimiter(_ => { });
+
+        RegisterSwaggerDocumentation(services);
+        RegisterGlobalExceptionHandling(services);
+        RegisterHealthCheckServices(services);
+        RegisterCorsPolicy(services);
+
+        return services;
+    }
+
+    public static WebApplication UseApiInfrastructure(this WebApplication app)
+    {
+        app.UseExceptionHandler();
+        app.UseCors(CorsConfiguration.DefaultPolicy);
+        MapSwaggerUIEndpoints(app);
+        app.UseRateLimiter();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.MapHealthChecks("/health");
+
+        return app;
+    }
+
+    private static void RegisterSwaggerDocumentation(IServiceCollection services)
+    {
+        services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new()
+            {
+                Title = "Monolithic API",
+                Version = "v1",
+                Description = "Production-ready Clean Architecture + CQRS + DDD + JWT Auth + OAuth implementation",
+                Contact = new()
+                {
+                    Name = "Your Brand Name",
+                    Url = new Uri("https://github.com/yourusername")
+                }
+            });
+        });
+    }
+
+    private static void RegisterGlobalExceptionHandling(IServiceCollection services)
+    {
+        services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddProblemDetails();
+    }
+
+    private static void RegisterHealthCheckServices(IServiceCollection services)
+    {
+        services.AddHealthChecks();
+    }
+
+    private static void RegisterCorsPolicy(IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddPolicy(CorsConfiguration.DefaultPolicy, builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            });
+        });
+    }
+
+    private static void MapSwaggerUIEndpoints(WebApplication app)
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(x =>
+        {
+            x.RoutePrefix = string.Empty;
+            x.SwaggerEndpoint("/swagger/v1/swagger.json", "Monolithic API v1");
+            x.DocumentTitle = "Monolithic API";
+        });
+    }
+}
