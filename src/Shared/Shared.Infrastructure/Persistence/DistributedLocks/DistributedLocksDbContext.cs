@@ -3,7 +3,7 @@ using Shared.Infrastructure.Persistence.Locks;
 
 namespace Shared.Infrastructure.Persistence.DistributedLocks;
 
-public class DistributedLocksDbContext : DbContext, IDatabaseContext
+public class DistributedLocksDbContext : DbContext
 {
     public DistributedLocksDbContext(DbContextOptions<DistributedLocksDbContext> options) : base(options)
     {
