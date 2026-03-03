@@ -1,31 +1,36 @@
 using FluentValidation;
 using MediatR;
-using Shared.Domain;
 
 namespace Shared.Application.Behaviors;
 
-public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TRequest>> validators)
+public sealed class ValidationBehavior<TRequest, TResponse>(
+    IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+    where TRequest : notnull
 {
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        var context = new ValidationContext<TRequest>(request);
-
-        var validationResults = await Task.WhenAll(
-            validators.Select(v => v.ValidateAsync(context, cancellationToken)));
-
-        var failures = validationResults
-            .Where(r => r.Errors.Count != 0)
-            .SelectMany(r => r.Errors)
-            .ToList();
-
-        if (failures.Count == 0)
+        if (!validators.Any())
             return await next();
 
-        throw new ValidationException(failures);
+        var context = new ValidationContext<TRequest>(request);
+
+        var failures = new List<FluentValidation.Results.ValidationFailure>();
+
+        foreach (var validator in validators)
+        {
+            var result = await validator.ValidateAsync(context, cancellationToken);
+
+            if (!result.IsValid)
+                failures.AddRange(result.Errors);
+        }
+
+        if (failures.Count > 0)
+            throw new ValidationException(failures);
+
+        return await next();
     }
 }

@@ -1,31 +1,47 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace Shared.Application.Behaviors;
 
-public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
+public sealed class LoggingBehavior<TRequest, TResponse>(
+    ILogger<LoggingBehavior<TRequest, TResponse>> logger)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+    where TRequest : notnull
 {
-    public async Task<TResponse> Handle(
-        TRequest request,
-        RequestHandlerDelegate<TResponse> next,
-        CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var requestName = typeof(TRequest).Name;
-        var requestNameWithModule = $"{typeof(TRequest).Namespace}.{requestName}";
-
-        logger.LogInformation("Starting request: {RequestName}", requestNameWithModule);
+        var stopwatch = Stopwatch.StartNew();
 
         try
         {
             var response = await next();
-            logger.LogInformation("Completed request: {RequestName}", requestNameWithModule);
+
+            stopwatch.Stop();
+
+            if (logger.IsEnabled(LogLevel.Information))
+            {
+                logger.LogInformation(
+                    "Handled {RequestName} in {ElapsedMilliseconds}ms",
+                    requestName,
+                    stopwatch.ElapsedMilliseconds);
+            }
+
             return response;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Exception occurred during request: {RequestName}", requestNameWithModule);
+            stopwatch.Stop();
+
+            if (logger.IsEnabled(LogLevel.Error))
+            {
+                logger.LogError(ex,
+                    "Unhandled exception for {RequestName} after {ElapsedMilliseconds}ms",
+                    requestName,
+                    stopwatch.ElapsedMilliseconds);
+            }
+
             throw;
         }
     }
