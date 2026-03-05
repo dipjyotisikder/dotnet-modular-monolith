@@ -2,7 +2,7 @@ namespace Shared.Infrastructure.Persistence.Locks;
 
 using Microsoft.EntityFrameworkCore;
 using Shared.Domain.Services;
-using Shared.Infrastructure.Persistence.DistributedLocks;
+using Shared.Infrastructure.Persistence;
 
 public class DatabaseDistributedLock : IDistributedLock
 {

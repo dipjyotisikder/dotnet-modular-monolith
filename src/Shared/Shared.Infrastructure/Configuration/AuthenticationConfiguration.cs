@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Shared.Infrastructure.Configuration.Authentication;
 using Shared.Infrastructure.Configuration.Options;
 using System.Text;
 
@@ -38,9 +37,6 @@ public static class AuthenticationConfiguration
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
             };
-
-            // Use custom events for token revocation validation
-            options.EventsType = typeof(TokenRevocationJwtBearerEvents);
         });
 
         if (oauthOptions.Google.Enabled && !string.IsNullOrEmpty(oauthOptions.Google.ClientId))

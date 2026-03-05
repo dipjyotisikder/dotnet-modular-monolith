@@ -1,7 +1,7 @@
 namespace Shared.Infrastructure.Persistence.Locks;
 
 using Shared.Domain.Services;
-using Shared.Infrastructure.Persistence.DistributedLocks;
+using Shared.Infrastructure.Persistence;
 
 public class DatabaseDistributedLockFactory : IDistributedLockFactory
 {
