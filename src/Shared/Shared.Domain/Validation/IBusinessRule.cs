@@ -1,5 +1,3 @@
-using Shared.Domain;
-
 namespace Shared.Domain.Validation;
 
 public interface IBusinessRule

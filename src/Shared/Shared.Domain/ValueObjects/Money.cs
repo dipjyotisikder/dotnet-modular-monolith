@@ -1,5 +1,3 @@
-using Shared.Domain;
-
 namespace Shared.Domain.ValueObjects;
 
 public sealed record Money : IEquatable<Money>, IComparable<Money>
