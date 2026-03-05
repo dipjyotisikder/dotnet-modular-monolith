@@ -1,13 +1,13 @@
-namespace Shared.Application.DTOs;
+namespace Shared.Application.Models;
 
-public record ApiResponseDto<T>
+public record ApiResponseModel<T>
 {
     public bool Success { get; init; }
     public string? Message { get; init; }
     public T? Data { get; init; }
     public Dictionary<string, string[]>? Errors { get; init; }
 
-    public static ApiResponseDto<T> Ok(T data, string? message = null) =>
+    public static ApiResponseModel<T> Ok(T data, string? message = null) =>
         new()
         {
             Success = true,
@@ -15,7 +15,7 @@ public record ApiResponseDto<T>
             Data = data
         };
 
-    public static ApiResponseDto<T> Error(string message, Dictionary<string, string[]>? errors = null) =>
+    public static ApiResponseModel<T> Error(string message, Dictionary<string, string[]>? errors = null) =>
         new()
         {
             Success = false,
@@ -24,20 +24,20 @@ public record ApiResponseDto<T>
         };
 }
 
-public record ApiResponseDto
+public record ApiResponseModel
 {
     public bool Success { get; init; }
     public string? Message { get; init; }
     public Dictionary<string, string[]>? Errors { get; init; }
 
-    public static ApiResponseDto Ok(string? message = null) =>
+    public static ApiResponseModel Ok(string? message = null) =>
         new()
         {
             Success = true,
             Message = message
         };
 
-    public static ApiResponseDto Error(string message, Dictionary<string, string[]>? errors = null) =>
+    public static ApiResponseModel Error(string message, Dictionary<string, string[]>? errors = null) =>
         new()
         {
             Success = false,

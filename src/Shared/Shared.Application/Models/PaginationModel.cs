@@ -1,6 +1,6 @@
-namespace Shared.Application.DTOs;
+namespace Shared.Application.Models;
 
-public record PaginationDto
+public record PaginationModel
 {
     public int PageNumber { get; init; } = 1;
     public int PageSize { get; init; } = 10;
@@ -8,8 +8,8 @@ public record PaginationDto
     public int TotalPages => (int)Math.Ceiling((double)TotalItems / PageSize);
 }
 
-public record PaginatedResponseDto<T>
+public record PaginatedResponseModel<T>
 {
     public IReadOnlyList<T> Items { get; init; } = [];
-    public PaginationDto Pagination { get; init; } = new();
+    public PaginationModel Pagination { get; init; } = new();
 }
