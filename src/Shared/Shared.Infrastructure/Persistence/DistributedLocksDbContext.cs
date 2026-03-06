@@ -9,15 +9,15 @@ public class DistributedLocksDbContext : DbContext
     {
     }
 
-    public DbSet<DistributedLockEntity> Locks => Set<DistributedLockEntity>();
+    public DbSet<DistributedLock> Locks => Set<DistributedLock>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema("Shared");
 
-        modelBuilder.Entity<DistributedLockEntity>(entity =>
+        modelBuilder.Entity<DistributedLock>(entity =>
         {
-            entity.ToTable("DistributedLockEntities");
+            entity.ToTable("DistributedLocks");
             entity.HasKey(e => e.LockKey);
             entity.Property(e => e.LockKey).HasMaxLength(200);
             entity.Property(e => e.InstanceId).HasMaxLength(100);

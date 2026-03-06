@@ -40,7 +40,7 @@ public class DatabaseDistributedLock : IDistributedLock
 
             if (existingLock == null)
             {
-                var newLock = new DistributedLockEntity
+                var newLock = new DistributedLock
                 {
                     LockKey = _key,
                     InstanceId = _instanceId,

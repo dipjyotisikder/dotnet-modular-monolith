@@ -1,6 +1,6 @@
 namespace Shared.Infrastructure.Persistence.Locks;
 
-public class DistributedLockEntity
+public class DistributedLock
 {
     public string LockKey { get; set; } = null!;
     public string? InstanceId { get; set; }

@@ -1,5 +1,6 @@
 namespace Shared.Infrastructure.Configuration;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Infrastructure.Middleware;
@@ -16,6 +17,9 @@ public static class ApiInfrastructureExtensions
         RegisterHealthCheckServices(services);
         RegisterCorsPolicy(services);
 
+        services.AddAuthorizationBuilder()
+            .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+
         return services;
     }
 
@@ -27,7 +31,7 @@ public static class ApiInfrastructureExtensions
         app.UseRateLimiter();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.MapHealthChecks("/health");
+        app.MapHealthChecks("/health").AllowAnonymous();
 
         return app;
     }
