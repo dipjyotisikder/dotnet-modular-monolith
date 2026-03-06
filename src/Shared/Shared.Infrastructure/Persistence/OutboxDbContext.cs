@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Shared.Domain.Entities;
+using Shared.Infrastructure.Entities;
 using Shared.Infrastructure.Persistence.Interceptors;
 
 namespace Shared.Infrastructure.Persistence;

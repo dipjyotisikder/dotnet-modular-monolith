@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Shared.Domain;
-using Shared.Domain.Entities;
 using Shared.Domain.Services;
+using Shared.Infrastructure.Entities;
 using System.Text.Json;
 
 namespace Shared.Infrastructure.Persistence.Interceptors;

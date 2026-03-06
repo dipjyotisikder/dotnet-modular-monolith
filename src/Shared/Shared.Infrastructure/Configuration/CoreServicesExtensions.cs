@@ -10,7 +10,6 @@ public static class CoreServicesExtensions
     public static IServiceCollection AddCoreServices(this IServiceCollection services)
     {
         AddTimeAbstraction(services);
-        AddUserContextServices(services);
         AddAuditingServices(services);
 
         return services;
@@ -19,12 +18,6 @@ public static class CoreServicesExtensions
     private static void AddTimeAbstraction(IServiceCollection services)
     {
         services.AddSingleton<ISystemClock, SystemClock>();
-    }
-
-    private static void AddUserContextServices(IServiceCollection services)
-    {
-        services.AddHttpContextAccessor();
-        services.AddScoped<IUserContext, HttpUserContext>();
     }
 
     private static void AddAuditingServices(IServiceCollection services)

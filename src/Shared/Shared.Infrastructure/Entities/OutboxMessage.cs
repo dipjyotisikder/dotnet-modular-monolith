@@ -1,4 +1,4 @@
-namespace Shared.Domain.Entities;
+namespace Shared.Infrastructure.Entities;
 
 using Shared.Domain.Services;
 

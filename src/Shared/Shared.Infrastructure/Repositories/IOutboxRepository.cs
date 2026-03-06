@@ -1,6 +1,6 @@
-using Shared.Domain.Entities;
+using Shared.Infrastructure.Entities;
 using Shared.Infrastructure.Repositories;
 
-namespace Shared.Domain.Repositories;
+namespace Shared.Infrastructure.Repositories;
 
 public interface IOutboxRepository : IRepository<OutboxMessage> { }

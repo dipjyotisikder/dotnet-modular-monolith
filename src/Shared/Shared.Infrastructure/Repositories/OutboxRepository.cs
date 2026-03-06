@@ -1,6 +1,6 @@
-using Shared.Domain.Entities;
-using Shared.Domain.Repositories;
+using Shared.Infrastructure.Entities;
 using Shared.Infrastructure.Persistence;
+using Shared.Infrastructure.Repositories;
 
 namespace Shared.Infrastructure.Repositories;
 

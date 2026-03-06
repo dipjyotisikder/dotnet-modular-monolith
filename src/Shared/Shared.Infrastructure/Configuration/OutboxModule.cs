@@ -3,7 +3,6 @@ namespace Shared.Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Domain.Repositories;
 using Shared.Infrastructure.Persistence;
 using Shared.Infrastructure.Repositories;
 
