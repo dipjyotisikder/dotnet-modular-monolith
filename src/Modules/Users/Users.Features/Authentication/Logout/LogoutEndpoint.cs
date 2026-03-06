@@ -1,0 +1,35 @@
+using MediatR;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Shared.Infrastructure.Endpoints;
+using Users.Features.Authentication.Logout;
+
+namespace Users.Presentation.Authentication;
+
+public class LogoutEndpoint : IEndpoint
+{
+    public void MapEndpoint(IEndpointRouteBuilder app)
+    {
+        app.MapGroup("/api/auth")
+            .MapPost("/logout", LogoutHandler)
+            .WithName("Logout")
+            .RequireAuthorization()
+            .WithTags("Authentication");
+    }
+
+    private static async Task<IResult> LogoutHandler(
+        LogoutRequest request,
+        ISender sender,
+        CancellationToken cancellationToken)
+    {
+        var command = new LogoutCommand(request.DeviceId);
+        var result = await sender.Send(command, cancellationToken);
+
+        return result.IsSuccess
+            ? Results.Ok()
+            : Results.BadRequest(result.Error);
+    }
+}
+
+public record LogoutRequest(string DeviceId);
