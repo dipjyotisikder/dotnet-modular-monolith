@@ -1,7 +1,7 @@
+using Bookings.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Persistence;
 using Users.Infrastructure.Persistence;
-using Bookings.Infrastructure.Persistence;
 
 namespace AppHost.Infrastructure.Persistence;
 

@@ -1,8 +1,8 @@
-using Shared.Infrastructure.Seeding;
-using Bookings.Domain.ValueObjects;
 using Bookings.Domain.Entities;
+using Bookings.Domain.ValueObjects;
 using Bookings.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Shared.Infrastructure.Seeding;
 
 namespace Bookings.Infrastructure.Seeding;
 
@@ -29,7 +29,7 @@ internal class HotelSeeder : Seeder
         foreach (var data in seedData)
         {
             var existingHotel = await _dbContext.Hotels.FirstOrDefaultAsync(h => h.Name == data.Name, cancellationToken);
-            
+
             if (existingHotel == null)
             {
                 var hotel = Hotel.Create(data.Name, data.Description, data.Stars,

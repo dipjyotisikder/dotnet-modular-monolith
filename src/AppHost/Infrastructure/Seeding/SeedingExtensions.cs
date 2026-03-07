@@ -1,6 +1,4 @@
 using Shared.Infrastructure.Seeding;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace AppHost.Infrastructure.Seeding;
 

@@ -7,7 +7,6 @@ using Shared.Infrastructure.BackgroundJobs;
 using Shared.Infrastructure.Configuration.Options;
 using Shared.Infrastructure.Messaging;
 using Shared.Infrastructure.Persistence;
-using Shared.Infrastructure.Repositories;
 
 public static class OutboxModuleExtensions
 {
@@ -15,16 +14,13 @@ public static class OutboxModuleExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<OutboxDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<OutboxDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<IOutboxRepository, OutboxRepository>();
+        services.AddRepositoriesFromAssembly(typeof(OutboxModuleExtensions).Assembly);
 
         services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
 
-        var outboxOptions = configuration.GetSection(OutboxOptions.SectionName)
-            .Get<OutboxOptions>();
-
+        var outboxOptions = configuration.GetSection(OutboxOptions.SectionName).Get<OutboxOptions>();
         if (outboxOptions?.Enabled == true)
         {
             services.AddHostedService<OutboxProcessor>();

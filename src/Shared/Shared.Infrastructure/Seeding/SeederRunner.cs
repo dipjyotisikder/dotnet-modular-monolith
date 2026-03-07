@@ -1,5 +1,5 @@
-using Shared.Domain.Seeding;
 using Microsoft.Extensions.Logging;
+using Shared.Domain.Seeding;
 
 namespace Shared.Infrastructure.Seeding;
 

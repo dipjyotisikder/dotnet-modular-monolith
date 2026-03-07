@@ -1,9 +1,9 @@
-using Shared.Infrastructure.Seeding;
-using Bookings.Domain.Enums;
 using Bookings.Domain.Entities;
+using Bookings.Domain.Enums;
 using Bookings.Domain.ValueObjects;
 using Bookings.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Shared.Infrastructure.Seeding;
 
 namespace Bookings.Infrastructure.Seeding;
 

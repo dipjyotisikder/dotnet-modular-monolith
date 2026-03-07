@@ -1,7 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Seeding;
 using Users.Domain.Entities;
 using Users.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
 
 namespace Users.Infrastructure.Seeding;
 
@@ -29,7 +29,7 @@ internal class UserSeeder : Seeder
         foreach (var (email, name, tier, isAdmin) in seedData)
         {
             var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
-            
+
             if (existingUser == null)
             {
                 var user = User.Create(email, name, passwordHash: "hashed_password", tier: tier).Value;
