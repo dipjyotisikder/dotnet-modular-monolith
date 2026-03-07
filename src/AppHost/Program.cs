@@ -22,11 +22,14 @@ builder.Services.RegisterCqrsHandlers(
 builder.Services.AddUsersFeatures(builder.Configuration);
 builder.Services.AddBookingsFeatures(builder.Configuration);
 
+builder.Services.AddScoped<SeederRunner>();
+
 builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
 await app.ApplyMigrationsAsync();
+await app.SeedAsync();
 
 app.UseApiInfrastructure();
 

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Domain.Services;
 using Shared.Infrastructure.Configuration;
+using Shared.Infrastructure.Seeding;
 using Users.Domain.Services;
 using Users.Infrastructure.Options;
 using Users.Infrastructure.Persistence;
@@ -34,6 +35,8 @@ public static class DependencyInjection
         services.Configure<JwtBearerOptions>(
             JwtBearerDefaults.AuthenticationScheme,
             options => options.EventsType = typeof(TokenRevocationJwtBearerEvents));
+
+        services.AddSeeding(typeof(DependencyInjection).Assembly);
 
         return services;
     }

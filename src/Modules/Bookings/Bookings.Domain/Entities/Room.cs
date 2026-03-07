@@ -16,7 +16,7 @@ public class Room : Entity
 
     private Room() { }
 
-    internal static Result<Room> Create(
+    public static Result<Room> Create(
         Guid hotelId,
         string roomNumber,
         RoomType roomType,
