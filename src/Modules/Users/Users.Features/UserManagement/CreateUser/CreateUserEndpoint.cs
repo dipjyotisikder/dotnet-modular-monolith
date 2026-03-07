@@ -15,7 +15,8 @@ public class CreateUserEndpoint : IEndpoint
             .MapPost("/", CreateUserHandler)
             .WithName("CreateUser")
             .RequireAuthorization("AdminPolicy")
-            .WithTags("Users");
+            .WithTags("Users")
+            .Produces(StatusCodes.Status201Created);
     }
 
     private static async Task<IResult> CreateUserHandler(

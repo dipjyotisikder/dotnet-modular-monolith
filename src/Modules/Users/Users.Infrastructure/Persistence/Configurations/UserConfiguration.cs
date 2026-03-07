@@ -46,6 +46,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.CreatedAt)
             .IsRequired();
 
+        builder.Property<string>("_tokenRevocationVersionJson")
+            .HasColumnName("TokenRevocationVersion")
+            .HasDefaultValue("{}");
+
+        builder.Ignore(u => u.TokenRevocationVersion);
         builder.Ignore(u => u.DomainEvents);
     }
 }

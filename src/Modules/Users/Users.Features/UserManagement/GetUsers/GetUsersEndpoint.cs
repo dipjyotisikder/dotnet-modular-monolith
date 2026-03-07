@@ -15,7 +15,8 @@ public class GetUsersEndpoint : IEndpoint
             .MapGet("/", GetUsersHandler)
             .WithName("GetUsers")
             .RequireAuthorization("AdminPolicy")
-            .WithTags("Users");
+            .WithTags("Users")
+            .Produces(StatusCodes.Status200OK);
     }
 
     private static async Task<IResult> GetUsersHandler(

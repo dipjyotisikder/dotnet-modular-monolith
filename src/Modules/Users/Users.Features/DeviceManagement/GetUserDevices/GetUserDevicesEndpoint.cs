@@ -16,7 +16,8 @@ public class GetUserDevicesEndpoint : IEndpoint
             .MapGet("/devices", GetUserDevicesHandler)
             .WithName("GetUserDevices")
             .RequireAuthorization()
-            .WithTags("Devices");
+            .WithTags("Devices")
+            .Produces(StatusCodes.Status200OK);
     }
 
     private static async Task<IResult> GetUserDevicesHandler(

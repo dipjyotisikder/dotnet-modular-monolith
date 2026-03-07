@@ -3,11 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Domain.Services;
-using Users.Domain.Repositories;
+using Shared.Infrastructure.Configuration;
 using Users.Domain.Services;
 using Users.Infrastructure.Options;
 using Users.Infrastructure.Persistence;
-using Users.Infrastructure.Repositories;
 using Users.Infrastructure.Services;
 
 namespace Users.Infrastructure;
@@ -24,14 +23,14 @@ public static class DependencyInjection
         services.Configure<PasswordHasherOptions>(
             configuration.GetSection("PasswordHasher"));
 
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IUserDeviceRepository, UserDeviceRepository>();
+        services.AddRepositoriesFromAssembly(typeof(DependencyInjection).Assembly);
+
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
-        services.AddScoped<TokenRevocationJwtBearerEvents>();
         services.AddHttpContextAccessor();
         services.AddScoped<IUserContext, HttpUserContext>();
 
+        services.AddScoped<TokenRevocationJwtBearerEvents>();
         services.Configure<JwtBearerOptions>(
             JwtBearerDefaults.AuthenticationScheme,
             options => options.EventsType = typeof(TokenRevocationJwtBearerEvents));

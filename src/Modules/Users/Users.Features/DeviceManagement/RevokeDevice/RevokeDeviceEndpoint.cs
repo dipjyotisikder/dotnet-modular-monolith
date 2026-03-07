@@ -15,7 +15,8 @@ public class RevokeDeviceEndpoint : IEndpoint
             .MapPost("/devices/{deviceId}/revoke", RevokeDeviceHandler)
             .WithName("RevokeDevice")
             .RequireAuthorization()
-            .WithTags("Devices");
+            .WithTags("Devices")
+            .Produces(StatusCodes.Status200OK);
     }
 
     private static async Task<IResult> RevokeDeviceHandler(

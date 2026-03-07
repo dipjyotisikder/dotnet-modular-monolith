@@ -15,7 +15,8 @@ public class LoginEndpoint : IEndpoint
             .MapPost("/login", LoginHandler)
             .WithName("Login")
             .AllowAnonymous()
-            .WithTags("Authentication");
+            .WithTags("Authentication")
+            .Produces(StatusCodes.Status200OK);
     }
 
     private static async Task<IResult> LoginHandler(

@@ -16,7 +16,8 @@ public class GetCurrentUserEndpoint : IEndpoint
             .MapGet("/me", GetCurrentUserHandler)
             .WithName("GetCurrentUser")
             .RequireAuthorization()
-            .WithTags("Users");
+            .WithTags("Users")
+            .Produces(StatusCodes.Status200OK);
     }
 
     private static async Task<IResult> GetCurrentUserHandler(

@@ -15,7 +15,8 @@ public class LogoutEndpoint : IEndpoint
             .MapPost("/logout", LogoutHandler)
             .WithName("Logout")
             .RequireAuthorization()
-            .WithTags("Authentication");
+            .WithTags("Authentication")
+            .Produces(StatusCodes.Status200OK);
     }
 
     private static async Task<IResult> LogoutHandler(

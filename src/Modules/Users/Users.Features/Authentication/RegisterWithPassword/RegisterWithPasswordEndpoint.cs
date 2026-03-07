@@ -15,7 +15,8 @@ public class RegisterWithPasswordEndpoint : IEndpoint
             .MapPost("/register", RegisterHandler)
             .WithName("Register")
             .AllowAnonymous()
-            .WithTags("Authentication");
+            .WithTags("Authentication")
+            .Produces(StatusCodes.Status201Created);
     }
 
     private static async Task<IResult> RegisterHandler(

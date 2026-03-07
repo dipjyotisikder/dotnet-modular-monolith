@@ -15,7 +15,8 @@ public class RefreshTokenEndpoint : IEndpoint
             .MapPost("/refresh", RefreshHandler)
             .WithName("RefreshToken")
             .AllowAnonymous()
-            .WithTags("Authentication");
+            .WithTags("Authentication")
+            .Produces(StatusCodes.Status200OK);
     }
 
     private static async Task<IResult> RefreshHandler(
