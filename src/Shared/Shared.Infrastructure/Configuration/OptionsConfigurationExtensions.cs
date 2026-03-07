@@ -1,4 +1,3 @@
-using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Infrastructure.Configuration.Options;
@@ -6,11 +5,11 @@ using Shared.Infrastructure.Configuration.Options.Validation;
 
 namespace Shared.Infrastructure.Configuration;
 
-public static class OptionsConfiguration
+public static class OptionsConfigurationExtensions
 {
     public static IServiceCollection AddOptionsConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddValidatorsFromAssemblyContaining<CorsOptionsValidator>();
+        services.AddOptionsValidatorsAsStingletonFromAssemblyContaining<CorsOptionsValidator>();
 
         services.AddOptions<JwtOptions>()
             .Bind(configuration.GetSection(JwtOptions.SectionName))

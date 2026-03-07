@@ -9,7 +9,7 @@ using Shared.Infrastructure.Messaging;
 using Shared.Infrastructure.Persistence;
 using Shared.Infrastructure.Repositories;
 
-public static class OutboxModule
+public static class OutboxModuleExtensions
 {
     public static IServiceCollection AddOutboxModule(
         this IServiceCollection services,

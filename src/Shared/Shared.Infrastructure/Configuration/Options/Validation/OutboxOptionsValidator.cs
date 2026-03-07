@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Shared.Infrastructure.Configuration.Options.Validation;
 
-public class OutboxOptionsValidator : AbstractValidator<OutboxOptions>
+public class OutboxOptionsValidator : AbstractValidator<OutboxOptions>, IOptionsValidator
 {
     public OutboxOptionsValidator()
     {

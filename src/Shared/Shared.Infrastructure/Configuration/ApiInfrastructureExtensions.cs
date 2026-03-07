@@ -47,8 +47,8 @@ public static class ApiInfrastructureExtensions
                 Description = "Production-ready Clean Architecture + CQRS + DDD + JWT Auth + OAuth implementation",
                 Contact = new()
                 {
-                    Name = "Your Brand Name",
-                    Url = new Uri("https://github.com/yourusername")
+                    Name = "Monolith Admin",
+                    Url = new Uri("https://github.com/dipjyotisikder")
                 }
             });
         });

@@ -1,7 +1,7 @@
 namespace Shared.Infrastructure.Configuration;
 
 using Microsoft.Extensions.DependencyInjection;
-using Shared.Infrastructure.Repositories;
+using Shared.Domain.Repositories;
 using System.Reflection;
 
 public static class RepositoryExtensions
@@ -21,14 +21,29 @@ public static class RepositoryExtensions
 
         foreach (var implementation in repositoryImplementations)
         {
-            var interfaces = implementation.GetInterfaces()
+            var allInterfaces = implementation.GetInterfaces();
+
+            var genericInterfaces = allInterfaces
                 .Where(i => i.IsGenericType &&
                             i.GetGenericTypeDefinition() == repositoryInterfaceType)
                 .ToList();
 
-            foreach (var @interface in interfaces)
+            foreach (var @interface in genericInterfaces)
             {
                 services.AddScoped(@interface, implementation);
+            }
+
+            var customRepositoryInterfaces = allInterfaces
+                .Where(i => !i.IsGenericType &&
+                           i.IsInterface &&
+                           i.GetInterfaces().Any(iface =>
+                               iface.IsGenericType &&
+                               iface.GetGenericTypeDefinition() == repositoryInterfaceType))
+                .ToList();
+
+            foreach (var customInterface in customRepositoryInterfaces)
+            {
+                services.AddScoped(customInterface, implementation);
             }
         }
 

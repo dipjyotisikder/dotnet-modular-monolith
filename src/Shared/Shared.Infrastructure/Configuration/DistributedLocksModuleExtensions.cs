@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Shared.Infrastructure.Persistence;
 using Shared.Infrastructure.Persistence.Locks;
 
-public static class DistributedLocksModule
+public static class DistributedLocksModuleExtensions
 {
     public static IServiceCollection AddDistributedLocksModule(
         this IServiceCollection services,

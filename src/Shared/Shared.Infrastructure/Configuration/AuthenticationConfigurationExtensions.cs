@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Shared.Infrastructure.Configuration;
 
-public static class AuthenticationConfiguration
+public static class AuthenticationConfigurationExtensions
 {
     public static IServiceCollection AddAuthenticationConfiguration(
         this IServiceCollection services,
@@ -57,7 +57,7 @@ public static class AuthenticationConfiguration
             });
         }
 
-        services.AddAuthorization(options =>
+        _ = services.AddAuthorization(options =>
         {
             options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
             options.AddPolicy("UserPolicy", policy => policy.RequireRole("User", "Admin"));

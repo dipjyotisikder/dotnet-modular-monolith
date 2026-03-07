@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Shared.Infrastructure.Configuration.Options.Validation;
 
-public class RabbitMqOptionsValidator : AbstractValidator<RabbitMqOptions>
+public class RabbitMqOptionsValidator : AbstractValidator<RabbitMqOptions>, IOptionsValidator
 {
     public RabbitMqOptionsValidator()
     {

@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Shared.Infrastructure.Configuration.Options.Validation;
 
-public class JwtOptionsValidator : AbstractValidator<JwtOptions>
+public class JwtOptionsValidator : AbstractValidator<JwtOptions>, IOptionsValidator
 {
     public JwtOptionsValidator()
     {

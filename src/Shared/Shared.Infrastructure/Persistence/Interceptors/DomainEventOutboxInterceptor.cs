@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Shared.Domain;
 using Shared.Domain.Services;
 using Shared.Infrastructure.Entities;
-using Shared.Infrastructure.Persistence;
 using System.Text.Json;
 
 namespace Shared.Infrastructure.Persistence.Interceptors;

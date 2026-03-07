@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Shared.Infrastructure.Configuration.Options.Validation;
 
-public class OAuthOptionsValidator : AbstractValidator<OAuthOptions>
+public class OAuthOptionsValidator : AbstractValidator<OAuthOptions>, IOptionsValidator
 {
     public OAuthOptionsValidator()
     {
