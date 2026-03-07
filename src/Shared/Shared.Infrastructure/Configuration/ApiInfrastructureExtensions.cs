@@ -44,7 +44,7 @@ public static class ApiInfrastructureExtensions
             {
                 Title = "Monolithic API",
                 Version = "v1",
-                Description = "Production-ready Clean Architecture + CQRS + DDD + JWT Auth + OAuth implementation",
+                Description = "Clean Architecture + CQRS + DDD + JWT Auth + OAuth",
                 Contact = new()
                 {
                     Name = "Monolith Admin",

@@ -5,16 +5,12 @@ namespace Shared.Application.Configuration;
 
 public static class CqrsConfiguration
 {
-    public static IServiceCollection RegisterCqrsHandlers(this IServiceCollection services, params Assembly[] assemblies)
+    public static IServiceCollection RegisterCqrsHandlers(this IServiceCollection services, Assembly assembly)
     {
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(typeof(CqrsConfiguration).Assembly);
-
-            if (assemblies.Length > 0)
-            {
-                cfg.RegisterServicesFromAssemblies(assemblies);
-            }
+            cfg.RegisterServicesFromAssembly(assembly);
         });
 
         return services;
