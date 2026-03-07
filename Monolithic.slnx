@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/Modules/" />
+  <Folder Name="/Modules/Bookings/">
+    <Project Path="src/Modules/Bookings/Bookings.Domain/Bookings.Domain.csproj" />
+    <Project Path="src/Modules/Bookings/Bookings.Features/Bookings.Features.csproj" />
+    <Project Path="src/Modules/Bookings/Bookings.Infrastructure/Bookings.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Users/">
+    <Project Path="src/Modules/Users/Users.Domain/Users.Domain.csproj" />
+    <Project Path="src/Modules/Users/Users.Features/Users.Features.csproj" />
+    <Project Path="src/Modules/Users/Users.Infrastructure/Users.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="src/Shared/Shared.Application/Shared.Application.csproj" />
+    <Project Path="src/Shared/Shared.Domain/Shared.Domain.csproj" />
+    <Project Path="src/Shared/Shared.Infrastructure/Shared.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Tests/" />
+  <Folder Name="/Tests/ArchitectureTests/">
+    <Project Path="src/Tests/ArchitectureTests/DomainLayerTests/DomainLayerTests.csproj" />
+    <Project Path="src/Tests/ArchitectureTests/FeaturesLayerTests/FeaturesLayerTests.csproj" Id="3b9925d3-6c06-4c9e-b835-d26c82c1c4eb" />
+    <Project Path="src/Tests/ArchitectureTests/InfrastructureLayerTests/InfrastructureLayerTests.csproj" Id="4e67aeca-b49d-4cc5-bda7-72783c3ec656" />
+  </Folder>
+  <Project Path="src/AppHost/AppHost.csproj" />
+</Solution>
