@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
-using Users.Features.DeviceManagement.RevokeDevice;
 
-namespace Users.Presentation.DeviceManagement;
+namespace Users.Features.DeviceManagement.RevokeDevice;
 
 public class RevokeDeviceEndpoint : IEndpoint
 {

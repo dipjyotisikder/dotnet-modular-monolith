@@ -1,4 +1,3 @@
-using Bookings.Features.BookingManagement.CompleteBooking;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -6,7 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using Shared.Domain;
 using Shared.Infrastructure.Endpoints;
 
-namespace Bookings.Presentation.BookingManagement;
+namespace Bookings.Features.BookingManagement.CompleteBooking;
 
 public class CompleteBookingEndpoint : IEndpoint
 {

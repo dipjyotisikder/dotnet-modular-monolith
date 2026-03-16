@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
-using Users.Features.Authentication.RefreshToken;
 
-namespace Users.Presentation.Authentication;
+namespace Users.Features.Authentication.RefreshToken;
 
 public class RefreshTokenEndpoint : IEndpoint
 {

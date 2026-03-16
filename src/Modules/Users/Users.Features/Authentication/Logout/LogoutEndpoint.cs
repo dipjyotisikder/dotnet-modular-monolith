@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
-using Users.Features.Authentication.Logout;
 
-namespace Users.Presentation.Authentication;
+namespace Users.Features.Authentication.Logout;
 
 public class LogoutEndpoint : IEndpoint
 {

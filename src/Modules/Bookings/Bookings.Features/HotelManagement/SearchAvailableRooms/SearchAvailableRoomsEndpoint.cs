@@ -1,4 +1,3 @@
-using Bookings.Features.HotelManagement.SearchAvailableRooms;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -6,7 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using Shared.Domain;
 using Shared.Infrastructure.Endpoints;
 
-namespace Bookings.Presentation.HotelManagement;
+namespace Bookings.Features.HotelManagement.SearchAvailableRooms;
 
 public class SearchAvailableRoomsEndpoint : IEndpoint
 {

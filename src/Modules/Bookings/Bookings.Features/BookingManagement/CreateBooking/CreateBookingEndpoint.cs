@@ -1,4 +1,3 @@
-using Bookings.Features.BookingManagement.CreateBooking;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -7,7 +6,7 @@ using Shared.Domain;
 using Shared.Domain.Services;
 using Shared.Infrastructure.Endpoints;
 
-namespace Bookings.Presentation.BookingManagement;
+namespace Bookings.Features.BookingManagement.CreateBooking;
 
 public class CreateBookingEndpoint : IEndpoint
 {

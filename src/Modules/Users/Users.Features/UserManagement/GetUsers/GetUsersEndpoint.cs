@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
-using Users.Features.UserManagement.GetUsers;
 
-namespace Users.Presentation.UserManagement;
+namespace Users.Features.UserManagement.GetUsers;
 
 public class GetUsersEndpoint : IEndpoint
 {

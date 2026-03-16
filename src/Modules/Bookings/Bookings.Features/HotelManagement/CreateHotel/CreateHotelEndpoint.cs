@@ -1,11 +1,10 @@
-using Bookings.Features.HotelManagement.CreateHotel;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
 
-namespace Bookings.Presentation.HotelManagement;
+namespace Bookings.Features.HotelManagement.CreateHotel;
 
 public class CreateHotelEndpoint : IEndpoint
 {

@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
 using System.Security.Claims;
-using Users.Features.UserManagement.GetCurrentUser;
 
-namespace Users.Presentation.UserManagement;
+namespace Users.Features.UserManagement.GetCurrentUser;
 
 public class GetCurrentUserEndpoint : IEndpoint
 {

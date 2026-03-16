@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
 using System.Security.Claims;
-using Users.Features.DeviceManagement.RevokeAllDevices;
 
-namespace Users.Presentation.DeviceManagement;
+namespace Users.Features.DeviceManagement.RevokeAllDevices;
 
 public class RevokeAllDevicesEndpoint : IEndpoint
 {
