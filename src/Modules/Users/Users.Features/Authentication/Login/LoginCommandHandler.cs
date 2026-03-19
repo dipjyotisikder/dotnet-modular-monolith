@@ -1,5 +1,6 @@
 using MediatR;
 using Shared.Domain;
+using Shared.Domain.Repositories;
 using Shared.Domain.Services;
 using Users.Domain.Entities;
 using Users.Domain.Repositories;
@@ -12,7 +13,8 @@ public class LoginCommandHandler(
     IUserDeviceRepository deviceRepository,
     IPasswordHasher passwordHasher,
     IJwtTokenService jwtTokenService,
-    ISystemClock clock)
+    ISystemClock clock,
+    IUnitOfWork unitOfWork)
     : IRequestHandler<LoginCommand, Result<LoginResponse>>
 {
     public async Task<Result<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -30,6 +32,7 @@ public class LoginCommandHandler(
             var (device, accessToken, refreshToken) = deviceResult.Value;
 
             user.UpdateLastLogin(clock);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             var response = new LoginResponse(
                 accessToken,

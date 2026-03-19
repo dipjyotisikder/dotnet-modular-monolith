@@ -1,12 +1,14 @@
 using MediatR;
 using Shared.Domain;
+using Shared.Domain.Repositories;
 using Users.Domain.Repositories;
 
 namespace Users.Features.DeviceManagement.RevokeAllDevices;
 
 public class RevokeAllDevicesCommandHandler(
     IUserRepository userRepository,
-    IUserDeviceRepository deviceRepository)
+    IUserDeviceRepository deviceRepository,
+    IUnitOfWork unitOfWork)
     : IRequestHandler<RevokeAllDevicesCommand, Result>
 {
     public async Task<Result> Handle(RevokeAllDevicesCommand request, CancellationToken cancellationToken)
@@ -23,6 +25,7 @@ public class RevokeAllDevicesCommandHandler(
                 return Result.Failure(revokeResult.Error, revokeResult.ErrorCode);
 
             await deviceRepository.RevokeUserDevicesAsync(request.UserId, cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
         catch (Exception)

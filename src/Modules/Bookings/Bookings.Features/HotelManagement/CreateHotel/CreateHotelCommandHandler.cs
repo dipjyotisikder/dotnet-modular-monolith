@@ -3,10 +3,11 @@ using Bookings.Domain.Repositories;
 using Bookings.Domain.ValueObjects;
 using MediatR;
 using Shared.Domain;
+using Shared.Domain.Repositories;
 
 namespace Bookings.Features.HotelManagement.CreateHotel;
 
-public class CreateHotelCommandHandler(IHotelRepository hotelRepository)
+public class CreateHotelCommandHandler(IHotelRepository hotelRepository, IUnitOfWork unitOfWork)
     : IRequestHandler<CreateHotelCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateHotelCommand request, CancellationToken cancellationToken)
@@ -22,6 +23,7 @@ public class CreateHotelCommandHandler(IHotelRepository hotelRepository)
                 return Result.Failure<Guid>(hotelResult.Error, hotelResult.ErrorCode);
 
             await hotelRepository.AddAsync(hotelResult.Value, cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(hotelResult.Value.Id);
         }

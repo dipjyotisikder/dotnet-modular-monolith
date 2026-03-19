@@ -2,10 +2,11 @@ using Bookings.Domain.Repositories;
 using Bookings.Domain.ValueObjects;
 using MediatR;
 using Shared.Domain;
+using Shared.Domain.Repositories;
 
 namespace Bookings.Features.HotelManagement.AddRoom;
 
-public class AddRoomCommandHandler(IHotelRepository hotelRepository)
+public class AddRoomCommandHandler(IHotelRepository hotelRepository, IUnitOfWork unitOfWork)
     : IRequestHandler<AddRoomCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(AddRoomCommand request, CancellationToken cancellationToken)
@@ -34,6 +35,7 @@ public class AddRoomCommandHandler(IHotelRepository hotelRepository)
                 return Result.Failure<Guid>(roomResult.Error, roomResult.ErrorCode);
 
             hotelRepository.Update(hotel);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(roomResult.Value.Id);
         }

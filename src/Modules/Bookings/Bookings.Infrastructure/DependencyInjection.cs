@@ -1,7 +1,9 @@
 using Bookings.Infrastructure.Persistence;
+using Bookings.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Domain.Repositories;
 using Shared.Infrastructure.Configuration;
 using Shared.Infrastructure.Seeding;
 
@@ -17,6 +19,7 @@ public static class DependencyInjection
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddRepositoriesFromAssembly(typeof(DependencyInjection).Assembly);
+        services.AddScoped<IUnitOfWork, BookingsUnitOfWork>();
         services.AddSeeding(typeof(DependencyInjection).Assembly);
 
         return services;

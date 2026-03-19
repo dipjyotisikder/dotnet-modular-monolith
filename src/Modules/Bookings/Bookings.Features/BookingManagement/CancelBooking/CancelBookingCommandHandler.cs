@@ -1,10 +1,11 @@
 using Bookings.Domain.Repositories;
 using MediatR;
 using Shared.Domain;
+using Shared.Domain.Repositories;
 
 namespace Bookings.Features.BookingManagement.CancelBooking;
 
-public class CancelBookingCommandHandler(IBookingRepository bookingRepository)
+public class CancelBookingCommandHandler(IBookingRepository bookingRepository, IUnitOfWork unitOfWork)
     : IRequestHandler<CancelBookingCommand, Result>
 {
     public async Task<Result> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
@@ -23,6 +24,7 @@ public class CancelBookingCommandHandler(IBookingRepository bookingRepository)
                 return cancelResult;
 
             bookingRepository.Update(booking);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

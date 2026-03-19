@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Domain.Repositories;
 using Shared.Domain.Services;
 using Shared.Infrastructure.Configuration;
 using Shared.Infrastructure.Seeding;
 using Users.Domain.Services;
 using Users.Infrastructure.Options;
 using Users.Infrastructure.Persistence;
+using Users.Infrastructure.Repositories;
 using Users.Infrastructure.Services;
 
 namespace Users.Infrastructure;
@@ -25,6 +27,7 @@ public static class DependencyInjection
             configuration.GetSection("PasswordHasher"));
 
         services.AddRepositoriesFromAssembly(typeof(DependencyInjection).Assembly);
+        services.AddScoped<IUnitOfWork, UsersUnitOfWork>();
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();

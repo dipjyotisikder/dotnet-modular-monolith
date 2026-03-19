@@ -1,12 +1,14 @@
 using MediatR;
 using Shared.Domain;
+using Shared.Domain.Repositories;
 using Users.Domain.Entities;
 using Users.Domain.Repositories;
 
 namespace Users.Features.UserManagement.CreateUser;
 
 public class CreateUserCommandHandler(
-    IUserRepository userRepository)
+    IUserRepository userRepository,
+    IUnitOfWork unitOfWork)
     : IRequestHandler<CreateUserCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -24,6 +26,7 @@ public class CreateUserCommandHandler(
             var user = userResult.Value;
 
             await userRepository.AddAsync(user, cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(user.Id);
         }

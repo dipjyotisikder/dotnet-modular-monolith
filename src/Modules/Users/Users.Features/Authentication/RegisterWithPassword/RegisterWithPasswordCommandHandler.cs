@@ -1,5 +1,6 @@
 using MediatR;
 using Shared.Domain;
+using Shared.Domain.Repositories;
 using Users.Domain.Entities;
 using Users.Domain.Repositories;
 using Users.Domain.Services;
@@ -8,7 +9,8 @@ namespace Users.Features.Authentication.RegisterWithPassword;
 
 public class RegisterWithPasswordCommandHandler(
     IUserRepository userRepository,
-    IPasswordHasher passwordHasher)
+    IPasswordHasher passwordHasher,
+    IUnitOfWork unitOfWork)
     : IRequestHandler<RegisterWithPasswordCommand, Result<Guid>>
 {
     public async Task<Result<Guid>> Handle(RegisterWithPasswordCommand request, CancellationToken cancellationToken)
@@ -28,6 +30,7 @@ public class RegisterWithPasswordCommandHandler(
             var user = userResult.Value;
 
             await userRepository.AddAsync(user, cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(user.Id);
         }
