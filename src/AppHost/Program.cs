@@ -19,10 +19,10 @@ builder.Services.AddApiInfrastructure();
 builder.Services.AddDistributedLocksModule(builder.Configuration);
 builder.Services.AddOutboxModule(builder.Configuration);
 
-builder.Services.AddUsersFeatures(builder.Configuration);
+builder.Services.AddUsersFeatures();
 builder.Services.AddUsersInfrastructure(builder.Configuration);
 
-builder.Services.AddBookingsFeatures(builder.Configuration);
+builder.Services.AddBookingsFeatures();
 builder.Services.AddBookingsInfrastructure(builder.Configuration);
 
 builder.Services.AddScoped<SeederRunner>();

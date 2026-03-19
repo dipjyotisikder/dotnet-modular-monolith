@@ -8,7 +8,7 @@ namespace Users.Features;
 public static class DependencyInjection
 {
     public static IServiceCollection AddUsersFeatures(
-        this IServiceCollection services, IConfiguration configuration)
+        this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
         services.RegisterCqrsHandlers(typeof(DependencyInjection).Assembly);

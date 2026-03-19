@@ -7,7 +7,7 @@ namespace Bookings.Features;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddBookingsFeatures(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddBookingsFeatures(this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
         services.RegisterCqrsHandlers(typeof(DependencyInjection).Assembly);
