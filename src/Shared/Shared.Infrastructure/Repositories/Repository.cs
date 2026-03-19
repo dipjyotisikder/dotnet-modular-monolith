@@ -4,16 +4,9 @@ using System.Linq.Expressions;
 
 namespace Shared.Infrastructure.Repositories;
 
-public class Repository<T> : IRepository<T> where T : class
+public class Repository<T>(DbContext context) : IRepository<T> where T : class
 {
-    private readonly DbContext _context;
-    private readonly DbSet<T> _set;
-
-    public Repository(DbContext context)
-    {
-        _context = context;
-        _set = context.Set<T>();
-    }
+    private readonly DbSet<T> _set = context.Set<T>();
 
     public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         => await _set.FindAsync([id], cancellationToken);
