@@ -1,21 +1,15 @@
 using Bookings.Domain.Entities;
 using Bookings.Domain.ValueObjects;
 using Bookings.Infrastructure.Persistence;
+using Bookings.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Seeding;
 
 namespace Bookings.Infrastructure.Seeding;
 
-internal class HotelSeeder : Seeder
+internal class HotelSeeder(BookingsDbContext dbContext, BookingsUnitOfWork unitOfWork) : Seeder
 {
-    private readonly BookingsDbContext _dbContext;
-
     public override int Priority => 1;
-
-    public HotelSeeder(BookingsDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
 
     public override async Task SeedAsync(CancellationToken cancellationToken = default)
     {
@@ -28,16 +22,16 @@ internal class HotelSeeder : Seeder
 
         foreach (var data in seedData)
         {
-            var existingHotel = await _dbContext.Hotels.FirstOrDefaultAsync(h => h.Name == data.Name, cancellationToken);
+            var existingHotel = await dbContext.Hotels.FirstOrDefaultAsync(h => h.Name == data.Name, cancellationToken);
 
             if (existingHotel == null)
             {
                 var hotel = Hotel.Create(data.Name, data.Description, data.Stars,
                     Address.Create(data.Street, data.City, data.Country, data.ZipCode).Value).Value;
-                await _dbContext.Hotels.AddAsync(hotel, cancellationToken);
+                await dbContext.Hotels.AddAsync(hotel, cancellationToken);
             }
         }
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

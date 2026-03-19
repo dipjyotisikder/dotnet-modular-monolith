@@ -1,10 +1,12 @@
 using AppHost.Infrastructure.Persistence;
 using AppHost.Infrastructure.Seeding;
 using Bookings.Features;
+using Bookings.Infrastructure;
 using Shared.Application.Configuration;
 using Shared.Infrastructure.Configuration;
 using Shared.Infrastructure.Seeding;
 using Users.Features;
+using Users.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,10 @@ builder.Services.AddDistributedLocksModule(builder.Configuration);
 builder.Services.AddOutboxModule(builder.Configuration);
 
 builder.Services.AddUsersFeatures(builder.Configuration);
+builder.Services.AddUsersInfrastructure(builder.Configuration);
+
 builder.Services.AddBookingsFeatures(builder.Configuration);
+builder.Services.AddBookingsInfrastructure(builder.Configuration);
 
 builder.Services.AddScoped<SeederRunner>();
 

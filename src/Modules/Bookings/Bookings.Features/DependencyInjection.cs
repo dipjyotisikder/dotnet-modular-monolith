@@ -1,4 +1,3 @@
-using Bookings.Infrastructure;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +12,6 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
         services.RegisterCqrsHandlers(typeof(DependencyInjection).Assembly);
 
-        services.AddBookingsInfrastructure(configuration);
         return services;
     }
 }

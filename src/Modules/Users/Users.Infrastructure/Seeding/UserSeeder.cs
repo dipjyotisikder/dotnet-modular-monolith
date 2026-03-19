@@ -2,19 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Seeding;
 using Users.Domain.Entities;
 using Users.Infrastructure.Persistence;
+using Users.Infrastructure.Repositories;
 
 namespace Users.Infrastructure.Seeding;
 
-internal class UserSeeder : Seeder
+internal class UserSeeder(UsersDbContext dbContext, UsersUnitOfWork unitOfWork) : Seeder
 {
-    private readonly UsersDbContext _dbContext;
-
     public override int Priority => 0;
-
-    public UserSeeder(UsersDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
 
     public override async Task SeedAsync(CancellationToken cancellationToken = default)
     {
@@ -28,17 +22,17 @@ internal class UserSeeder : Seeder
 
         foreach (var (email, name, tier, isAdmin) in seedData)
         {
-            var existingUser = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+            var existingUser = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
 
             if (existingUser == null)
             {
                 var user = User.Create(email, name, passwordHash: "hashed_password", tier: tier).Value;
                 if (isAdmin)
                     user.AddRole("Admin");
-                await _dbContext.Users.AddAsync(user, cancellationToken);
+                await dbContext.Users.AddAsync(user, cancellationToken);
             }
         }
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

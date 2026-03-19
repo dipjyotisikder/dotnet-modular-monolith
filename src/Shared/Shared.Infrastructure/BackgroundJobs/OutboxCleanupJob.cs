@@ -63,7 +63,6 @@ public class OutboxCleanupJob(
 
             if (oldMessages.Count < batchSize) break;
 
-            // SMALL DELAY BETWEEN BATCHES TO REDUCE DATABASE LOAD
             await Task.Delay(100, ct);
         }
 

@@ -1,6 +1,6 @@
+using Bookings.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore.Storage;
 using Shared.Domain.Repositories;
-using Bookings.Infrastructure.Persistence;
 
 namespace Bookings.Infrastructure.Repositories;
 
