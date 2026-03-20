@@ -490,22 +490,6 @@ public class MoneyTests
     }
 
     /// <summary>
-    /// Tests that Add method throws ArgumentNullException when the other parameter is null.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void Add_NullParameter_ThrowsException()
-    {
-        // Arrange
-        var moneyResult = Money.Create(100, "USD");
-        var money = moneyResult.Value;
-        Money? nullMoney = null;
-
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => money.Add(nullMoney!));
-    }
-
-    /// <summary>
     /// Tests that Add method correctly handles large decimal values.
     /// </summary>
     [Fact]

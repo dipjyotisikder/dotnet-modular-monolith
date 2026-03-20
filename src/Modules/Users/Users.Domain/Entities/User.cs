@@ -20,20 +20,26 @@ public class User : Entity
     public string? RefreshToken { get; private set; }
     public DateTime? RefreshTokenExpiresAt { get; private set; }
 
-    private string _tokenRevocationVersionJson = "{}";
+    private int _accessTokenVersion = 1;
+    private int _refreshTokenVersion = 1;
+    private DateTime _lastTokenRevokedAt;
+
+    private string _tokenRevocationVersionJson = "";
     public DateTime? LastPasswordChangedAt { get; private set; }
 
     public TokenRevocationVersion TokenRevocationVersion
     {
-        get
-        {
-            if (string.IsNullOrEmpty(_tokenRevocationVersionJson) || _tokenRevocationVersionJson == "{}")
-                return new TokenRevocationVersion();
-            return JsonSerializer.Deserialize<TokenRevocationVersion>(_tokenRevocationVersionJson) ?? new TokenRevocationVersion();
-        }
+        get => new TokenRevocationVersion 
+        { 
+            AccessTokenVersion = _accessTokenVersion, 
+            RefreshTokenVersion = _refreshTokenVersion, 
+            LastRevokedAt = _lastTokenRevokedAt 
+        };
         private set
         {
-            _tokenRevocationVersionJson = JsonSerializer.Serialize(value);
+            _accessTokenVersion = value.AccessTokenVersion;
+            _refreshTokenVersion = value.RefreshTokenVersion;
+            _lastTokenRevokedAt = value.LastRevokedAt;
         }
     }
 

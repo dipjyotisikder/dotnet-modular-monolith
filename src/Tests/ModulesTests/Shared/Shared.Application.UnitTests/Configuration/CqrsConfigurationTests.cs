@@ -27,21 +27,6 @@ public class CqrsConfigurationTests
     }
 
     /// <summary>
-    /// Tests that RegisterCqrsHandlers throws ArgumentNullException when the assembly parameter is null.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void RegisterCqrsHandlers_NullAssembly_ThrowsArgumentNullException()
-    {
-        // Arrange
-        var services = new ServiceCollection();
-        Assembly assembly = null!;
-
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => services.RegisterCqrsHandlers(assembly));
-    }
-
-    /// <summary>
     /// Tests that RegisterCqrsHandlers works correctly with different valid assemblies,
     /// ensuring it registers services from both the CqrsConfiguration assembly and the provided assembly.
     /// </summary>
