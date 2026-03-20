@@ -1,4 +1,3 @@
-﻿using Microsoft.AspNetCore.Identity;
 using Moq;
 using Shared.Domain;
 using Shared.Domain.Repositories;
@@ -8,22 +7,13 @@ using Users.Domain.Repositories;
 using Users.Domain.Services;
 using Users.Features.Authentication.Login;
 
-
 namespace Users.Features.UnitTests.Authentication.Login;
 
-/// <summary>
-/// Unit tests for the LoginCommandHandler class.
-/// </summary>
 public class LoginCommandHandlerTests
 {
-    /// <summary>
-    /// Tests that Handle returns a successful LoginResponse when all validations pass
-    /// and the login process completes successfully.
-    /// </summary>
     [Fact]
     public async Task Handle_ValidCredentialsAndSuccessfulLogin_ReturnsSuccessWithLoginResponse()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -83,10 +73,8 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
         Assert.Equal(accessToken, result.Value.AccessToken);
@@ -100,13 +88,9 @@ public class LoginCommandHandlerTests
         unitOfWorkMock.Verify(x => x.SaveChangesAsync(cancellationToken), Times.Once);
     }
 
-    /// <summary>
-    /// Tests that Handle returns an unauthorized failure when the user is not found.
-    /// </summary>
     [Fact]
     public async Task Handle_UserNotFound_ReturnsUnauthorizedFailure()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -129,23 +113,17 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsFailure);
         Assert.Equal("Invalid email or password", result.Error);
         Assert.Equal(ErrorCodes.UNAUTHORIZED, result.ErrorCode);
         unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
-    /// <summary>
-    /// Tests that Handle returns an unauthorized failure when the user is inactive.
-    /// </summary>
     [Fact]
     public async Task Handle_UserIsInactive_ReturnsUnauthorizedFailure()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -173,22 +151,16 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsFailure);
         Assert.Equal("Invalid email or password", result.Error);
         Assert.Equal(ErrorCodes.UNAUTHORIZED, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Handle returns an unauthorized failure when the user has an OAuth provider.
-    /// </summary>
     [Fact]
     public async Task Handle_UserHasOAuthProvider_ReturnsUnauthorizedFailure()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -215,22 +187,16 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsFailure);
         Assert.Equal("Invalid email or password", result.Error);
         Assert.Equal(ErrorCodes.UNAUTHORIZED, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Handle returns an unauthorized failure when the password verification fails.
-    /// </summary>
     [Fact]
     public async Task Handle_InvalidPassword_ReturnsUnauthorizedFailure()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -261,23 +227,16 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsFailure);
         Assert.Equal("Invalid email or password", result.Error);
         Assert.Equal(ErrorCodes.UNAUTHORIZED, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Handle returns an internal error failure when an exception is thrown
-    /// during the validation phase.
-    /// </summary>
     [Fact]
     public async Task Handle_ValidateCredentialsThrowsException_ReturnsInternalErrorFailure()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -300,22 +259,16 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsFailure);
         Assert.Equal("An error occurred during login", result.Error);
         Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Handle returns an internal error failure when GenerateAccessToken throws an exception.
-    /// </summary>
     [Fact]
     public async Task Handle_GenerateAccessTokenThrowsException_ReturnsInternalErrorFailure()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -358,22 +311,16 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsFailure);
         Assert.Equal("An error occurred during login", result.Error);
         Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Handle returns an internal error failure when SaveChangesAsync throws an exception.
-    /// </summary>
     [Fact]
     public async Task Handle_SaveChangesAsyncThrowsException_ReturnsInternalErrorFailure()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -424,22 +371,16 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsFailure);
         Assert.Equal("An error occurred during login", result.Error);
         Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Handle correctly passes the cancellation token through all async operations.
-    /// </summary>
     [Fact]
     public async Task Handle_WithCancellationToken_PassesCancellationTokenToAsyncOperations()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -491,24 +432,17 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsSuccess);
         userRepositoryMock.Verify(x => x.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>(), cancellationToken), Times.Once);
         deviceRepositoryMock.Verify(x => x.AddAsync(It.IsAny<UserDevice>(), cancellationToken), Times.Once);
         unitOfWorkMock.Verify(x => x.SaveChangesAsync(cancellationToken), Times.Once);
     }
 
-    /// <summary>
-    /// Tests that Handle correctly handles optional parameters with null values
-    /// and still creates a successful login response.
-    /// </summary>
     [Fact]
     public async Task Handle_WithNullOptionalParameters_ReturnsSuccessWithLoginResponse()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -559,21 +493,15 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
     }
 
-    /// <summary>
-    /// Tests that Handle returns unauthorized failure when user has no password hash (null).
-    /// </summary>
     [Fact]
     public async Task Handle_UserHasNullPasswordHash_ReturnsUnauthorizedFailure()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -600,23 +528,17 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsFailure);
         Assert.Equal("Invalid email or password", result.Error);
         Assert.Equal(ErrorCodes.UNAUTHORIZED, result.ErrorCode);
         passwordHasherMock.Verify(x => x.VerifyPassword(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
-    /// <summary>
-    /// Tests that Handle correctly includes all user roles in the login response.
-    /// </summary>
     [Fact]
     public async Task Handle_UserWithMultipleRoles_ReturnsLoginResponseWithAllRoles()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -668,23 +590,17 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value.Roles);
         Assert.Contains("User", result.Value.Roles);
         Assert.Contains("Admin", result.Value.Roles);
     }
 
-    /// <summary>
-    /// Tests that Handle invokes UpdateLastLogin on the user entity.
-    /// </summary>
     [Fact]
     public async Task Handle_SuccessfulLogin_UpdatesUserLastLogin()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -736,22 +652,16 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(user.LastLoginAt);
         clockMock.Verify(x => x.UtcNow, Times.AtLeastOnce);
     }
 
-    /// <summary>
-    /// Tests that Handle adds a device to the repository during successful login.
-    /// </summary>
     [Fact]
     public async Task Handle_SuccessfulLogin_AddsDeviceToRepository()
     {
-        // Arrange
         var userRepositoryMock = new Mock<IUserRepository>();
         var deviceRepositoryMock = new Mock<IUserDeviceRepository>();
         var passwordHasherMock = new Mock<IPasswordHasher>();
@@ -802,10 +712,8 @@ public class LoginCommandHandlerTests
             clockMock.Object,
             unitOfWorkMock.Object);
 
-        // Act
         var result = await handler.Handle(command, cancellationToken);
 
-        // Assert
         Assert.True(result.IsSuccess);
         deviceRepositoryMock.Verify(x => x.AddAsync(It.Is<UserDevice>(d => d.DeviceName == "MyDevice"), cancellationToken), Times.Once);
     }
