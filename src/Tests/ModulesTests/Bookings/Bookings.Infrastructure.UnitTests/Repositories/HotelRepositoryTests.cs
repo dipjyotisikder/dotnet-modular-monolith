@@ -1,4 +1,10 @@
 ﻿using Moq;
+using Xunit;
+using Microsoft.EntityFrameworkCore;
+using Bookings.Infrastructure.Persistence;
+using Bookings.Infrastructure.Repositories;
+using Shared.Domain.Services;
+using Shared.Infrastructure.Persistence.Interceptors;
 
 namespace Bookings.Infrastructure.UnitTests.Repositories;
 

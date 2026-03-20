@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.Routing;
+using Moq;
+using Users.Features.UserManagement.CreateUser;
 
 
 namespace Users.Features.UnitTests.UserManagement.CreateUser;

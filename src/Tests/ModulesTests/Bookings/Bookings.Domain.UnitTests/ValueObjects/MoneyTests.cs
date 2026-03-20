@@ -1,5 +1,7 @@
-﻿namespace Bookings.Domain.UnitTests.ValueObjects;
+﻿using Xunit;
+using Bookings.Domain.ValueObjects;
 
+namespace Bookings.Domain.UnitTests.ValueObjects;
 
 public class MoneyTests
 {

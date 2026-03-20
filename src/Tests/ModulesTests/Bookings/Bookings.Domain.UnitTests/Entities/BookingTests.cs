@@ -1,4 +1,10 @@
 ﻿using Moq;
+using Xunit;
+using Bookings.Domain.Entities;
+using Bookings.Domain.ValueObjects;
+using Bookings.Domain.Enums;
+using Bookings.Domain.Events;
+using Shared.Domain;
 
 namespace Bookings.Domain.UnitTests.Entities;
 

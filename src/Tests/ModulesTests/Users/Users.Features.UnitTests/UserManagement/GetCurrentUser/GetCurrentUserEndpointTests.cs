@@ -1,4 +1,9 @@
-﻿namespace Users.Features.UnitTests.UserManagement.GetCurrentUser;
+﻿using Xunit;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
+using Users.Features.UserManagement.GetCurrentUser;
+
+namespace Users.Features.UnitTests.UserManagement.GetCurrentUser;
 
 /// <summary>
 /// Unit tests for <see cref="GetCurrentUserEndpoint"/>.

@@ -1,4 +1,9 @@
-﻿namespace Bookings.Infrastructure.UnitTests.Persistence.Configurations;
+﻿using Xunit;
+using Microsoft.EntityFrameworkCore;
+using Bookings.Infrastructure.Persistence.Configurations;
+using Bookings.Domain.Entities;
+
+namespace Bookings.Infrastructure.UnitTests.Persistence.Configurations;
 
 /// <summary>
 /// Unit tests for the <see cref="RoomConfiguration"/> class.

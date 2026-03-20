@@ -1,4 +1,7 @@
-﻿namespace Users.Features.UnitTests.Authentication.Login;
+﻿using FluentValidation.TestHelper;
+using Users.Features.Authentication.Login;
+
+namespace Users.Features.UnitTests.Authentication.Login;
 
 /// <summary>
 /// Unit tests for <see cref="LoginCommandValidator"/>.

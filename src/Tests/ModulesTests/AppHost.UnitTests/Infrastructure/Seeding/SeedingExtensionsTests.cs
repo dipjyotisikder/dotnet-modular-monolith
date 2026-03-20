@@ -1,4 +1,11 @@
 ﻿using Moq;
+using Xunit;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Shared.Domain.Seeding;
+using Shared.Infrastructure.Seeding;
+using AppHost.Infrastructure.Seeding;
 
 namespace AppHost.UnitTests.Infrastructure.Seeding;
 

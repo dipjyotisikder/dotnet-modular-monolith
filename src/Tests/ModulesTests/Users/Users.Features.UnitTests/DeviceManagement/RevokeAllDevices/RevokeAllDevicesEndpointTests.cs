@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.Routing;
+using Moq;
+using Users.Features.DeviceManagement.RevokeAllDevices;
 
 
 namespace Users.Features.UnitTests.DeviceManagement.RevokeAllDevices;

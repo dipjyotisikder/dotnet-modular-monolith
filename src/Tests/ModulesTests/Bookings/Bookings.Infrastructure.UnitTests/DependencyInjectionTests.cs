@@ -1,5 +1,8 @@
 ﻿using Moq;
-
+using Xunit;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Bookings.Infrastructure;
 
 namespace Bookings.Infrastructure.UnitTests;
 

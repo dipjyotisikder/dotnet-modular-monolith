@@ -1,4 +1,11 @@
-﻿using Moq;
+﻿using Bookings.Infrastructure.Persistence;
+using Bookings.Infrastructure.Repositories;
+using Bookings.Infrastructure.Seeding;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using Shared.Domain.Services;
+using Shared.Infrastructure.Persistence.Interceptors;
 
 namespace Bookings.Infrastructure.UnitTests.Seeding;
 /// <summary>

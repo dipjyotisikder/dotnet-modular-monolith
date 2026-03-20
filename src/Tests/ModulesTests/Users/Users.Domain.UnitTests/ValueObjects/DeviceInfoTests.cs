@@ -1,5 +1,7 @@
-﻿namespace Users.Domain.UnitTests.ValueObjects;
+﻿using Xunit;
+using Users.Domain.ValueObjects;
 
+namespace Users.Domain.UnitTests.ValueObjects;
 
 public class DeviceInfoTests
 {

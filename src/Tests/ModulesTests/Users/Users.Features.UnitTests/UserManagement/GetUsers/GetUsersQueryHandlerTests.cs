@@ -1,4 +1,9 @@
 ﻿using Moq;
+using Xunit;
+using Users.Domain.Entities;
+using Shared.Domain;
+using Users.Features.UserManagement.GetUsers;
+using Users.Domain.Repositories;
 
 namespace Users.Features.UnitTests.UserManagement.GetUsers;
 /// <summary>

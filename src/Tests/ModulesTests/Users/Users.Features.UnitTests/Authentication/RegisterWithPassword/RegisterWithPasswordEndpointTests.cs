@@ -1,4 +1,8 @@
-﻿namespace Users.Features.UnitTests.Authentication.RegisterWithPassword;
+﻿using Xunit;
+using Microsoft.AspNetCore.Routing;
+using Users.Features.Authentication.RegisterWithPassword;
+
+namespace Users.Features.UnitTests.Authentication.RegisterWithPassword;
 
 /// <summary>
 /// Unit tests for <see cref="RegisterWithPasswordEndpoint"/>.

@@ -1,5 +1,12 @@
 ﻿using Moq;
+using Xunit;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using Bookings.Infrastructure.Persistence;
+using Bookings.Infrastructure.Repositories;
+using Bookings.Infrastructure.Seeding;
+using Shared.Domain.Services;
+using Shared.Infrastructure.Persistence.Interceptors;
 
 namespace Bookings.Infrastructure.UnitTests.Seeding;
 /// <summary>
@@ -60,7 +67,7 @@ public class HotelSeederTests
         var auditableInterceptor = new Shared.Infrastructure.Persistence.Interceptors.AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
         var domainEventInterceptor = new Shared.Infrastructure.Persistence.Interceptors.DomainEventOutboxInterceptor(mockClock.Object, mockServiceScopeFactory.Object);
         var dbContext = new BookingsDbContext(options, auditableInterceptor, domainEventInterceptor);
-        var unitOfWork = new Repositories.BookingsUnitOfWork(dbContext);
+        var unitOfWork = new BookingsUnitOfWork(dbContext);
         var seeder = new HotelSeeder(dbContext, unitOfWork);
         // Act
         await seeder.SeedAsync();

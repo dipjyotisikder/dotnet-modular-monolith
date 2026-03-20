@@ -1,5 +1,10 @@
-﻿namespace Bookings.Domain.UnitTests.Entities;
+﻿using Xunit;
+using Bookings.Domain.Entities;
+using Bookings.Domain.ValueObjects;
+using Bookings.Domain.Enums;
+using Shared.Domain;
 
+namespace Bookings.Domain.UnitTests.Entities;
 
 /// <summary>
 /// Unit tests for the Hotel entity class.

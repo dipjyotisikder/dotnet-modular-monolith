@@ -1,5 +1,8 @@
-﻿namespace Bookings.Domain.UnitTests.ValueObjects;
+﻿using Xunit;
+using Bookings.Domain.ValueObjects;
+using Shared.Domain;
 
+namespace Bookings.Domain.UnitTests.ValueObjects;
 
 public class AddressTests
 {

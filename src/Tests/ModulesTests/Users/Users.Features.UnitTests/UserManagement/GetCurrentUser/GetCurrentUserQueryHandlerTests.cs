@@ -1,5 +1,9 @@
 ﻿using Moq;
+using Shared.Domain;
 using System.Linq.Expressions;
+using Users.Domain.Entities;
+using Users.Domain.Repositories;
+using Users.Features.UserManagement.GetCurrentUser;
 
 
 namespace Users.Features.UnitTests.UserManagement.GetCurrentUser;

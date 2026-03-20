@@ -1,5 +1,8 @@
-﻿namespace Users.Domain.UnitTests.Entities;
+﻿using Xunit;
+using Users.Domain.Entities;
+using Shared.Domain;
 
+namespace Users.Domain.UnitTests.Entities;
 
 public class UserDeviceTests
 {

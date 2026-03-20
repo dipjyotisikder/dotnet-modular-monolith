@@ -1,4 +1,7 @@
-﻿namespace Users.Features.UnitTests.Authentication.RegisterWithPassword;
+﻿using FluentValidation.TestHelper;
+using Users.Features.Authentication.RegisterWithPassword;
+
+namespace Users.Features.UnitTests.Authentication.RegisterWithPassword;
 
 /// <summary>
 /// Unit tests for <see cref="RegisterWithPasswordCommandValidator"/>.

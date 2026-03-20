@@ -1,5 +1,9 @@
 ﻿using Moq;
-
+using Xunit;
+using Users.Domain.Repositories;
+using Users.Features.Authentication.Logout;
+using Shared.Domain;
+using Users.Domain.Entities;
 
 namespace Users.Features.UnitTests.Authentication.Logout;
 
