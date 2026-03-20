@@ -1,6 +1,5 @@
 using Shared.Domain;
 using Shared.Domain.Services;
-using System.Text.Json;
 using Users.Domain.ValueObjects;
 
 namespace Users.Domain.Entities;
@@ -29,11 +28,11 @@ public class User : Entity
 
     public TokenRevocationVersion TokenRevocationVersion
     {
-        get => new TokenRevocationVersion 
-        { 
-            AccessTokenVersion = _accessTokenVersion, 
-            RefreshTokenVersion = _refreshTokenVersion, 
-            LastRevokedAt = _lastTokenRevokedAt 
+        get => new TokenRevocationVersion
+        {
+            AccessTokenVersion = _accessTokenVersion,
+            RefreshTokenVersion = _refreshTokenVersion,
+            LastRevokedAt = _lastTokenRevokedAt
         };
         private set
         {

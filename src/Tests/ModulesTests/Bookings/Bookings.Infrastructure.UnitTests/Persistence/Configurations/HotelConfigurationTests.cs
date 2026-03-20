@@ -1,35 +1,24 @@
-﻿using Moq;
-using System.Linq.Expressions;
-using Xunit;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Bookings.Domain.Entities;
+using Bookings.Domain.ValueObjects;
 using Bookings.Infrastructure.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
-using Bookings.Domain.ValueObjects;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Moq;
+using System.Linq.Expressions;
 
 namespace Bookings.Infrastructure.UnitTests.Persistence.Configurations;
 
-/// <summary>
-/// Unit tests for the HotelConfiguration class.
-/// </summary>
 public class HotelConfigurationTests
 {
-    /// <summary>
-    /// Tests that Configure method calls HasKey to set up the primary key.
-    /// Verifies that the Id property is configured as the primary key.
-    /// </summary>
     [Fact]
     public void Configure_ValidBuilder_CallsHasKeyForId()
     {
-        // Arrange
         var configuration = new HotelConfiguration();
         var modelBuilder = new ModelBuilder();
         var entityTypeBuilder = modelBuilder.Entity<Hotel>();
 
-        // Act
         configuration.Configure(entityTypeBuilder);
 
-        // Assert
         var entityType = modelBuilder.Model.FindEntityType(typeof(Hotel));
         var primaryKey = entityType.FindPrimaryKey();
         Assert.NotNull(primaryKey);
@@ -37,22 +26,15 @@ public class HotelConfigurationTests
         Assert.Equal("Id", primaryKey.Properties.First().Name);
     }
 
-    /// <summary>
-    /// Tests that Configure method configures the Name property with required and max length constraints.
-    /// Verifies that Name property configuration methods are called correctly.
-    /// </summary>
     [Fact]
     public void Configure_ValidBuilder_ConfiguresNamePropertyAsRequiredWithMaxLength()
     {
-        // Arrange
         var configuration = new HotelConfiguration();
         var modelBuilder = new ModelBuilder();
         var entityTypeBuilder = modelBuilder.Entity<Hotel>();
 
-        // Act
         configuration.Configure(entityTypeBuilder);
 
-        // Assert
         var model = modelBuilder.FinalizeModel();
         var entityType = model.FindEntityType(typeof(Hotel));
         Assert.NotNull(entityType);
@@ -63,22 +45,15 @@ public class HotelConfigurationTests
         Assert.Equal(200, nameProperty.GetMaxLength());
     }
 
-    /// <summary>
-    /// Tests that Configure method configures the Address as an owned entity.
-    /// Verifies that OwnsOne is called for the Address property.
-    /// </summary>
     [Fact]
     public void Configure_ValidBuilder_ConfiguresAddressAsOwnedEntity()
     {
-        // Arrange
         var configuration = new HotelConfiguration();
         var modelBuilder = new ModelBuilder();
         var entityTypeBuilder = modelBuilder.Entity<Hotel>();
 
-        // Act
         configuration.Configure(entityTypeBuilder);
 
-        // Assert
         var model = modelBuilder.FinalizeModel();
         var hotelEntityType = model.FindEntityType(typeof(Hotel));
         Assert.NotNull(hotelEntityType);
@@ -88,22 +63,15 @@ public class HotelConfigurationTests
         Assert.True(addressNavigation.ForeignKey.IsOwnership, "Address should be configured as an owned entity");
     }
 
-    /// <summary>
-    /// Tests that Configure method sets up the relationship between Hotel and Rooms.
-    /// Verifies that HasMany is called for the Rooms collection.
-    /// </summary>
     [Fact]
     public void Configure_ValidBuilder_ConfiguresRoomsRelationship()
     {
-        // Arrange
         var configuration = new HotelConfiguration();
         var modelBuilder = new ModelBuilder();
         var entityTypeBuilder = modelBuilder.Entity<Hotel>();
 
-        // Act
         configuration.Configure(entityTypeBuilder);
 
-        // Assert
         var model = modelBuilder.FinalizeModel();
         var hotelEntityType = model.FindEntityType(typeof(Hotel));
         Assert.NotNull(hotelEntityType);
@@ -114,24 +82,17 @@ public class HotelConfigurationTests
         Assert.Equal(typeof(Room), roomsNavigation.TargetEntityType.ClrType);
     }
 
-    /// <summary>
-    /// Tests that Configure method sets cascade delete behavior for the Rooms relationship.
-    /// Verifies that OnDelete is called with DeleteBehavior.Cascade.
-    /// </summary>
     [Fact]
     public void Configure_ValidBuilder_ConfiguresCascadeDeleteForRooms()
     {
-        // Arrange
         var configuration = new HotelConfiguration();
         var optionsBuilder = new DbContextOptionsBuilder<DbContext>();
         optionsBuilder.UseInMemoryDatabase("TestDb");
         var modelBuilder = new ModelBuilder(new Microsoft.EntityFrameworkCore.Metadata.Conventions.ConventionSet());
         var entityTypeBuilder = modelBuilder.Entity<Hotel>();
 
-        // Act
         configuration.Configure(entityTypeBuilder);
 
-        // Assert
         var model = modelBuilder.FinalizeModel();
         var hotelEntityType = model.FindEntityType(typeof(Hotel));
         var roomsNavigation = hotelEntityType.FindNavigation(nameof(Hotel.Rooms));
@@ -140,22 +101,15 @@ public class HotelConfigurationTests
         Assert.Equal(DeleteBehavior.Cascade, foreignKey.DeleteBehavior);
     }
 
-    /// <summary>
-    /// Tests that Configure method sets the property access mode for Rooms navigation to Field.
-    /// Verifies that UsePropertyAccessMode is called with PropertyAccessMode.Field.
-    /// </summary>
     [Fact]
     public void Configure_ValidBuilder_SetsPropertyAccessModeForRoomsToField()
     {
-        // Arrange
         var configuration = new HotelConfiguration();
         var modelBuilder = new ModelBuilder();
         var entityTypeBuilder = modelBuilder.Entity<Hotel>();
 
-        // Act
         configuration.Configure(entityTypeBuilder);
 
-        // Assert
         var model = modelBuilder.FinalizeModel();
         var hotelEntityType = model.FindEntityType(typeof(Hotel));
         Assert.NotNull(hotelEntityType);
@@ -164,9 +118,6 @@ public class HotelConfigurationTests
         Assert.Equal(PropertyAccessMode.Field, roomsNavigation.GetPropertyAccessMode());
     }
 
-    /// <summary>
-    /// Helper method to set up common mock builder behavior.
-    /// </summary>
     private static void SetupMockBuilder(Mock<EntityTypeBuilder<Hotel>> mockBuilder)
     {
         var mockKeyBuilder = new Mock<KeyBuilder>();

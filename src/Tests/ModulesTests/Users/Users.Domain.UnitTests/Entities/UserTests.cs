@@ -1,20 +1,12 @@
 ﻿using Moq;
-using Xunit;
-using Users.Domain.Entities;
-using Users.Domain.ValueObjects;
 using Shared.Domain;
 using Shared.Domain.Services;
+using Users.Domain.Entities;
 
 namespace Users.Domain.UnitTests.Entities;
-/// <summary>
-/// Unit tests for the <see cref = "User.TokenRevocationVersion"/> property.
-/// </summary>
+
 public class UserTests
 {
-    /// <summary>
-    /// Tests that TokenRevocationVersion returns a new instance with default values
-    /// when a User is initially created and the backing JSON field is "{}".
-    /// </summary>
     [Fact]
     public void TokenRevocationVersion_DefaultState_ReturnsNewInstanceWithDefaultValues()
     {
@@ -30,10 +22,6 @@ public class UserTests
         Assert.Equal(default(DateTime), tokenVersion.LastRevokedAt);
     }
 
-    /// <summary>
-    /// Tests that TokenRevocationVersion getter returns a new instance on each call,
-    /// demonstrating deserialization behavior.
-    /// </summary>
     [Fact]
     public void TokenRevocationVersion_GetterCalledMultipleTimes_ReturnsNewInstancesEachTime()
     {
@@ -49,10 +37,6 @@ public class UserTests
         Assert.Equal(tokenVersion1.RefreshTokenVersion, tokenVersion2.RefreshTokenVersion);
     }
 
-    /// <summary>
-    /// Tests that TokenRevocationVersion getter correctly handles the empty JSON object "{}"
-    /// by returning a new instance with default values.
-    /// </summary>
     [Fact]
     public void TokenRevocationVersion_WithEmptyJsonBackingField_ReturnsDefaultInstance()
     {
@@ -68,10 +52,6 @@ public class UserTests
         Assert.Equal(default(DateTime), tokenVersion.LastRevokedAt);
     }
 
-    /// <summary>
-    /// Verifies that ClearRefreshToken method sets both RefreshToken and RefreshTokenExpiresAt to null
-    /// when they have been previously set with values.
-    /// </summary>
     [Fact]
     public void ClearRefreshToken_WhenRefreshTokenIsSet_ClearsBothProperties()
     {
@@ -88,10 +68,6 @@ public class UserTests
         Assert.Null(user.RefreshTokenExpiresAt);
     }
 
-    /// <summary>
-    /// Verifies that ClearRefreshToken method is idempotent and can be safely called
-    /// when RefreshToken and RefreshTokenExpiresAt are already null.
-    /// </summary>
     [Fact]
     public void ClearRefreshToken_WhenRefreshTokenIsAlreadyNull_RemainsNull()
     {
@@ -105,12 +81,6 @@ public class UserTests
         Assert.Null(user.RefreshTokenExpiresAt);
     }
 
-    /// <summary>
-    /// Tests that RevokeRefreshTokens correctly increments the RefreshTokenVersion 
-    /// for the specified number of calls and persists the changes.
-    /// </summary>
-    /// <param name = "numberOfCalls">The number of times to call RevokeRefreshTokens.</param>
-    /// <param name = "expectedVersion">The expected RefreshTokenVersion after the calls.</param>
     [Theory]
     [InlineData(1, 2)]
     [InlineData(2, 3)]
@@ -134,10 +104,6 @@ public class UserTests
         Assert.Equal(initialVersion + numberOfCalls, finalVersion);
     }
 
-    /// <summary>
-    /// Tests that RevokeRefreshTokens does not modify the AccessTokenVersion,
-    /// ensuring it only affects the RefreshTokenVersion.
-    /// </summary>
     [Fact]
     public void RevokeRefreshTokens_DoesNotModifyAccessTokenVersion()
     {
@@ -154,11 +120,6 @@ public class UserTests
     }
 
     #region CreateWithOAuth Tests
-    /// <summary>
-    /// Tests that CreateWithOAuth successfully creates a user with valid inputs and default tier.
-    /// Input: Valid email, name, oauthProvider, oauthProviderId
-    /// Expected: Returns Success result with User having correct property values and default tier "free"
-    /// </summary>
     [Fact]
     public void CreateWithOAuth_ValidInputsWithDefaultTier_ReturnsSuccessWithCorrectUser()
     {
@@ -182,11 +143,6 @@ public class UserTests
         Assert.NotEqual(Guid.Empty, result.Value.Id);
     }
 
-    /// <summary>
-    /// Tests that CreateWithOAuth successfully creates a user with valid inputs and custom tier.
-    /// Input: Valid email, name, oauthProvider, oauthProviderId, and custom tier "premium"
-    /// Expected: Returns Success result with User having correct property values including custom tier
-    /// </summary>
     [Fact]
     public void CreateWithOAuth_ValidInputsWithCustomTier_ReturnsSuccessWithCorrectTier()
     {
@@ -205,11 +161,6 @@ public class UserTests
         Assert.Equal(name, result.Value.Name);
     }
 
-    /// <summary>
-    /// Tests that CreateWithOAuth succeeds when oauthProviderId is null.
-    /// Input: Valid email, name, oauthProvider, but null oauthProviderId
-    /// Expected: Returns Success result (no validation on oauthProviderId)
-    /// </summary>
     [Fact]
     public void CreateWithOAuth_NullOAuthProviderId_ReturnsSuccess()
     {
@@ -225,11 +176,6 @@ public class UserTests
         Assert.Null(result.Value.OAuthProviderId);
     }
 
-    /// <summary>
-    /// Tests that CreateWithOAuth succeeds when oauthProviderId is empty string.
-    /// Input: Valid email, name, oauthProvider, but empty oauthProviderId
-    /// Expected: Returns Success result (no validation on oauthProviderId)
-    /// </summary>
     [Fact]
     public void CreateWithOAuth_EmptyOAuthProviderId_ReturnsSuccess()
     {
@@ -245,11 +191,6 @@ public class UserTests
         Assert.Equal(string.Empty, result.Value.OAuthProviderId);
     }
 
-    /// <summary>
-    /// Tests that CreateWithOAuth fails when email is null, empty, or whitespace.
-    /// Input: Various invalid email values (null, empty, whitespace)
-    /// Expected: Returns Failure result with "Email Cannot Be Empty" and VALIDATION_ERROR code
-    /// </summary>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -273,11 +214,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that CreateWithOAuth fails when name is null, empty, or whitespace.
-    /// Input: Valid email but various invalid name values (null, empty, whitespace)
-    /// Expected: Returns Failure result with "Name Cannot Be Empty" and VALIDATION_ERROR code
-    /// </summary>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -301,11 +237,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that CreateWithOAuth fails when oauthProvider is null, empty, or whitespace.
-    /// Input: Valid email and name but various invalid oauthProvider values (null, empty, whitespace)
-    /// Expected: Returns Failure result with "OAuth Provider Cannot Be Empty" and VALIDATION_ERROR code
-    /// </summary>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -329,11 +260,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that CreateWithOAuth accepts various valid tier values without validation.
-    /// Input: Valid email, name, oauthProvider, oauthProviderId with various tier values
-    /// Expected: Returns Success result with the provided tier value
-    /// </summary>
     [Theory]
     [InlineData("free")]
     [InlineData("premium")]
@@ -355,11 +281,6 @@ public class UserTests
         Assert.Equal(tier, result.Value.Tier);
     }
 
-    /// <summary>
-    /// Tests that CreateWithOAuth accepts special characters in string parameters.
-    /// Input: Email, name, and oauthProvider with special characters
-    /// Expected: Returns Success result with values preserved as-is
-    /// </summary>
     [Fact]
     public void CreateWithOAuth_SpecialCharactersInStrings_ReturnsSuccess()
     {
@@ -378,11 +299,6 @@ public class UserTests
         Assert.Equal(oauthProviderId, result.Value.OAuthProviderId);
     }
 
-    /// <summary>
-    /// Tests that CreateWithOAuth handles very long string inputs.
-    /// Input: Very long strings for email, name, oauthProvider, oauthProviderId
-    /// Expected: Returns Success result with values preserved
-    /// </summary>
     [Fact]
     public void CreateWithOAuth_VeryLongStrings_ReturnsSuccess()
     {
@@ -402,9 +318,6 @@ public class UserTests
     }
 
     #endregion
-    /// <summary>
-    /// Tests that AddRole returns a failure result when the role parameter is null.
-    /// </summary>
     [Fact]
     public void AddRole_NullRole_ReturnsFailure()
     {
@@ -421,9 +334,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that AddRole returns a failure result when the role parameter is an empty string.
-    /// </summary>
     [Fact]
     public void AddRole_EmptyRole_ReturnsFailure()
     {
@@ -439,10 +349,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that AddRole returns a failure result when the role parameter contains only whitespace characters.
-    /// </summary>
-    /// <param name = "whitespaceRole">A string containing only whitespace characters.</param>
     [Theory]
     [InlineData(" ")]
     [InlineData("  ")]
@@ -464,9 +370,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that AddRole successfully adds a new valid role, updates the Roles property, and returns success.
-    /// </summary>
     [Fact]
     public void AddRole_ValidNewRole_AddsRoleAndReturnsSuccess()
     {
@@ -484,9 +387,6 @@ public class UserTests
         Assert.Equal("User,Admin", user.Roles);
     }
 
-    /// <summary>
-    /// Tests that AddRole does not add a duplicate role when the role already exists, but still returns success.
-    /// </summary>
     [Fact]
     public void AddRole_DuplicateRole_DoesNotAddAndReturnsSuccess()
     {
@@ -503,9 +403,6 @@ public class UserTests
         Assert.Equal(1, user.Roles.Split(',').Count(r => r == "Admin"));
     }
 
-    /// <summary>
-    /// Tests that AddRole correctly adds multiple different roles sequentially.
-    /// </summary>
     [Fact]
     public void AddRole_MultipleRoles_AddsAllRolesSuccessfully()
     {
@@ -527,9 +424,6 @@ public class UserTests
         Assert.Equal("User,Admin,Moderator,Premium", user.Roles);
     }
 
-    /// <summary>
-    /// Tests that AddRole handles roles with special characters correctly.
-    /// </summary>
     [Theory]
     [InlineData("Super-Admin")]
     [InlineData("Role_With_Underscores")]
@@ -550,9 +444,6 @@ public class UserTests
         Assert.Contains(role, user.Roles.Split(','));
     }
 
-    /// <summary>
-    /// Tests that AddRole handles very long role names correctly.
-    /// </summary>
     [Fact]
     public void AddRole_VeryLongRoleName_AddsSuccessfully()
     {
@@ -567,9 +458,6 @@ public class UserTests
         Assert.Contains(longRole, user.Roles.Split(','));
     }
 
-    /// <summary>
-    /// Tests that AddRole with a role containing commas is handled (edge case that could break comma-separated format).
-    /// </summary>
     [Fact]
     public void AddRole_RoleWithComma_AddsRoleButMayBreakFormat()
     {
@@ -583,9 +471,6 @@ public class UserTests
         Assert.Contains("Role,WithComma", user.Roles);
     }
 
-    /// <summary>
-    /// Tests that AddRole on the default "User" role is idempotent.
-    /// </summary>
     [Fact]
     public void AddRole_AddingDefaultUserRole_IsIdempotent()
     {
@@ -601,9 +486,6 @@ public class UserTests
         Assert.Equal(1, user.Roles.Split(',').Count(r => r == "User"));
     }
 
-    /// <summary>
-    /// Tests that AddRole works correctly when the user already has multiple roles.
-    /// </summary>
     [Fact]
     public void AddRole_UserWithMultipleExistingRoles_AddsNewRoleCorrectly()
     {
@@ -620,10 +502,6 @@ public class UserTests
         Assert.Equal(4, user.Roles.Split(',').Length);
     }
 
-    /// <summary>
-    /// Tests that AddRole handles role names with leading and trailing whitespace by treating them as different from trimmed versions.
-    /// Note: The current implementation does not trim whitespace, so " Admin " is different from "Admin".
-    /// </summary>
     [Fact]
     public void AddRole_RoleWithLeadingTrailingWhitespace_AddsAsIs()
     {
@@ -637,9 +515,6 @@ public class UserTests
         Assert.Contains(" Admin ", user.Roles.Split(','));
     }
 
-    /// <summary>
-    /// Tests that AddRole handles Unicode characters in role names correctly.
-    /// </summary>
     [Theory]
     [InlineData("Rôle")]
     [InlineData("角色")]
@@ -657,9 +532,6 @@ public class UserTests
         Assert.Contains(role, user.Roles.Split(','));
     }
 
-    /// <summary>
-    /// Tests that AddRole returns success even when adding an already existing role (idempotency check).
-    /// </summary>
     [Fact]
     public void AddRole_ExistingRole_ReturnsSuccessWithoutModification()
     {
@@ -675,11 +547,6 @@ public class UserTests
         Assert.Equal(rolesCountBefore, user.Roles.Split(',').Length);
     }
 
-    /// <summary>
-    /// Tests that RevokeAllTokens with default reason returns success result.
-    /// Verifies that when no reason parameter is provided, the method uses the default value
-    /// and returns a successful result.
-    /// </summary>
     [Fact]
     public void RevokeAllTokens_WithDefaultReason_ReturnsSuccessResult()
     {
@@ -695,12 +562,6 @@ public class UserTests
         Assert.Equal(string.Empty, result.Error);
     }
 
-    /// <summary>
-    /// Tests that RevokeAllTokens with various reason values returns success result.
-    /// Verifies that different string inputs for the reason parameter are accepted
-    /// and the method consistently returns success.
-    /// </summary>
-    /// <param name = "reason">The reason string to test.</param>
     [Theory]
     [InlineData("Admin revocation")]
     [InlineData("Custom reason")]
@@ -724,10 +585,6 @@ public class UserTests
         Assert.Equal(string.Empty, result.Error);
     }
 
-    /// <summary>
-    /// Tests that RevokeAllTokens can be called with null reason without throwing an exception.
-    /// The reason parameter is currently unused in the implementation.
-    /// </summary>
     [Fact]
     public void RevokeAllTokens_WithNullReason_ThrowsArgumentNullException()
     {
@@ -740,11 +597,6 @@ public class UserTests
         Assert.True(result.IsSuccess);
     }
 
-    /// <summary>
-    /// Tests that RevokeAllTokens can be called multiple times successfully.
-    /// Verifies that the method is idempotent and can be invoked repeatedly
-    /// without throwing exceptions or failing.
-    /// </summary>
     [Fact]
     public void RevokeAllTokens_CalledMultipleTimes_ReturnsSuccessEachTime()
     {
@@ -761,11 +613,6 @@ public class UserTests
         Assert.True(result3.IsSuccess);
     }
 
-    /// <summary>
-    /// Tests that RevokeAllTokens works correctly for OAuth users.
-    /// Verifies that the method functions properly for users created via OAuth
-    /// and returns a successful result.
-    /// </summary>
     [Fact]
     public void RevokeAllTokens_ForOAuthUser_ReturnsSuccessResult()
     {
@@ -781,11 +628,6 @@ public class UserTests
         Assert.Equal(string.Empty, result.Error);
     }
 
-    /// <summary>
-    /// Tests that UpdatePassword fails when provided with null, empty, or whitespace-only password hash values.
-    /// The test verifies that the method returns a failure result with the appropriate error message and error code.
-    /// </summary>
-    /// <param name = "invalidPasswordHash">The invalid password hash value to test.</param>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -809,11 +651,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that UpdatePassword succeeds with a valid password hash.
-    /// Verifies that the PasswordHash property is updated, LastPasswordChangedAt is set,
-    /// and the method returns a success result.
-    /// </summary>
     [Fact]
     public void UpdatePassword_ValidPasswordHash_ReturnsSuccessAndUpdatesProperties()
     {
@@ -834,11 +671,6 @@ public class UserTests
         Assert.True(user.LastPasswordChangedAt >= beforeUpdate && user.LastPasswordChangedAt <= afterUpdate);
     }
 
-    /// <summary>
-    /// Tests that UpdatePassword handles various valid password hash formats including
-    /// very long strings, special characters, and unicode characters.
-    /// </summary>
-    /// <param name = "passwordHash">The password hash value to test.</param>
     [Theory]
     [InlineData("shortHash")]
     [InlineData("$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy")]
@@ -857,10 +689,6 @@ public class UserTests
         Assert.Equal(passwordHash, user.PasswordHash);
     }
 
-    /// <summary>
-    /// Tests that UpdatePassword with a very long password hash (simulating extreme edge cases)
-    /// succeeds and properly stores the value.
-    /// </summary>
     [Fact]
     public void UpdatePassword_VeryLongPasswordHash_ReturnsSuccess()
     {
@@ -875,9 +703,6 @@ public class UserTests
         Assert.Equal(veryLongHash, user.PasswordHash);
     }
 
-    /// <summary>
-    /// Tests that UpdateTier returns a failure result when the tier parameter is null.
-    /// </summary>
     [Fact]
     public void UpdateTier_NullTier_ReturnsFailure()
     {
@@ -894,9 +719,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that UpdateTier returns a failure result when the tier parameter is an empty string.
-    /// </summary>
     [Fact]
     public void UpdateTier_EmptyString_ReturnsFailure()
     {
@@ -913,10 +735,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that UpdateTier returns a failure result when the tier parameter contains only whitespace characters.
-    /// </summary>
-    /// <param name = "whitespaceTier">The whitespace-only string to test.</param>
     [Theory]
     [InlineData(" ")]
     [InlineData("  ")]
@@ -938,10 +756,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that UpdateTier successfully updates the tier property and returns a success result with a valid tier value.
-    /// </summary>
-    /// <param name = "validTier">The valid tier value to test.</param>
     [Theory]
     [InlineData("premium")]
     [InlineData("enterprise")]
@@ -962,10 +776,6 @@ public class UserTests
         Assert.NotEqual(originalTier, user.Tier);
     }
 
-    /// <summary>
-    /// Tests that UpdateTier accepts tier values with special characters and updates the tier property correctly.
-    /// </summary>
-    /// <param name = "tierWithSpecialChars">The tier value with special characters.</param>
     [Theory]
     [InlineData("premium-plus")]
     [InlineData("tier_1")]
@@ -986,9 +796,6 @@ public class UserTests
         Assert.Equal(tierWithSpecialChars, user.Tier);
     }
 
-    /// <summary>
-    /// Tests that UpdateTier accepts and handles very long tier strings correctly.
-    /// </summary>
     [Fact]
     public void UpdateTier_VeryLongString_ReturnsSucessAndUpdatesTierProperty()
     {
@@ -1004,9 +811,6 @@ public class UserTests
         Assert.Equal(longTier, user.Tier);
     }
 
-    /// <summary>
-    /// Tests that UpdateTier correctly preserves user state when updating to a different tier multiple times.
-    /// </summary>
     [Fact]
     public void UpdateTier_MultipleTierUpdates_EachUpdateSucceedsAndPreservesState()
     {
@@ -1033,9 +837,6 @@ public class UserTests
         Assert.Equal(originalName, user.Name);
     }
 
-    /// <summary>
-    /// Tests that UpdateTier accepts tier values with numeric characters.
-    /// </summary>
     [Theory]
     [InlineData("tier1")]
     [InlineData("123")]
@@ -1052,9 +853,6 @@ public class UserTests
         Assert.Equal(tierWithNumbers, user.Tier);
     }
 
-    /// <summary>
-    /// Tests that UpdateTier accepts tier values with Unicode characters.
-    /// </summary>
     [Theory]
     [InlineData("премиум")]
     [InlineData("高级")]
@@ -1072,11 +870,6 @@ public class UserTests
         Assert.Equal(tierWithUnicode, user.Tier);
     }
 
-    /// <summary>
-    /// Tests that RemoveRole successfully removes an existing role from the user's roles.
-    /// Input: User with "User,Admin" roles, removing "Admin".
-    /// Expected: "Admin" is removed, roles become "User", method returns success.
-    /// </summary>
     [Fact]
     public void RemoveRole_ExistingRole_RemovesRoleAndReturnsSuccess()
     {
@@ -1092,11 +885,6 @@ public class UserTests
         Assert.True(user.HasRole("User"));
     }
 
-    /// <summary>
-    /// Tests that RemoveRole handles removing a non-existent role gracefully.
-    /// Input: User with "User" role, removing "Admin" which doesn't exist.
-    /// Expected: No change to roles, method returns success.
-    /// </summary>
     [Fact]
     public void RemoveRole_NonExistentRole_ReturnsSuccessWithoutChange()
     {
@@ -1110,11 +898,6 @@ public class UserTests
         Assert.True(user.HasRole("User"));
     }
 
-    /// <summary>
-    /// Tests that RemoveRole defaults to "User" when the last role is removed.
-    /// Input: User with only "Admin" role, removing "Admin".
-    /// Expected: Roles default to "User", method returns success.
-    /// </summary>
     [Fact]
     public void RemoveRole_RemovingLastRole_DefaultsToUser()
     {
@@ -1133,11 +916,6 @@ public class UserTests
         Assert.Equal("User", roles[0]);
     }
 
-    /// <summary>
-    /// Tests RemoveRole with various edge case role strings.
-    /// Input: Various edge case strings including empty, whitespace, null, special characters.
-    /// Expected: Method handles gracefully and returns success.
-    /// </summary>
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
@@ -1154,11 +932,6 @@ public class UserTests
         Assert.True(result.IsSuccess);
     }
 
-    /// <summary>
-    /// Tests that AddRole prevents duplicate roles and RemoveRole fully removes the role.
-    /// Input: User with role "User", adding "Admin" twice (second add is ignored).
-    /// Expected: AddRole prevents duplicates, so RemoveRole removes the only "Admin" instance.
-    /// </summary>
     [Fact]
     public void RemoveRole_DuplicateRoles_RemovesFirstOccurrence()
     {
@@ -1174,11 +947,6 @@ public class UserTests
         Assert.False(user.HasRole("Admin")); // Role is completely removed since there was no duplicate
     }
 
-    /// <summary>
-    /// Tests that RemoveRole works correctly with multiple different roles.
-    /// Input: User with "User,Admin,Manager", removing "Admin".
-    /// Expected: "Admin" is removed, roles become "User,Manager".
-    /// </summary>
     [Fact]
     public void RemoveRole_MultipleRoles_RemovesSpecifiedRoleOnly()
     {
@@ -1196,11 +964,6 @@ public class UserTests
         Assert.True(user.HasRole("Manager"));
     }
 
-    /// <summary>
-    /// Tests that RemoveRole handles removing the default "User" role correctly.
-    /// Input: User with "User,Admin" roles, removing "User".
-    /// Expected: "User" is removed, roles become "Admin".
-    /// </summary>
     [Fact]
     public void RemoveRole_RemovingDefaultUserRole_RemovesSuccessfully()
     {
@@ -1216,11 +979,6 @@ public class UserTests
         Assert.True(user.HasRole("Admin"));
     }
 
-    /// <summary>
-    /// Tests that RemoveRole is case-sensitive.
-    /// Input: User with "Admin" role, removing "admin" (lowercase).
-    /// Expected: Nothing is removed as roles are case-sensitive, "Admin" remains.
-    /// </summary>
     [Fact]
     public void RemoveRole_CaseSensitive_DoesNotRemoveIfCaseMismatch()
     {
@@ -1235,11 +993,6 @@ public class UserTests
         Assert.True(user.HasRole("Admin"));
     }
 
-    /// <summary>
-    /// Tests RemoveRole with roles containing special characters.
-    /// Input: User with "Super-Admin" role, removing "Super-Admin".
-    /// Expected: Role is removed successfully.
-    /// </summary>
     [Fact]
     public void RemoveRole_RoleWithSpecialCharacters_RemovesSuccessfully()
     {
@@ -1254,11 +1007,6 @@ public class UserTests
         Assert.False(user.HasRole("Super-Admin"));
     }
 
-    /// <summary>
-    /// Tests RemoveRole with very long role name.
-    /// Input: User with a very long role name, removing it.
-    /// Expected: Role is removed successfully.
-    /// </summary>
     [Fact]
     public void RemoveRole_VeryLongRoleName_RemovesSuccessfully()
     {
@@ -1274,9 +1022,6 @@ public class UserTests
         Assert.False(user.HasRole(longRoleName));
     }
 
-    /// <summary>
-    /// Tests that UpdateName returns failure when the name parameter is null.
-    /// </summary>
     [Fact]
     public void UpdateName_NullName_ReturnsFailureWithValidationError()
     {
@@ -1293,11 +1038,6 @@ public class UserTests
         Assert.Equal("Original Name", user.Name);
     }
 
-    /// <summary>
-    /// Tests that UpdateName returns failure when provided with invalid string inputs
-    /// including empty strings and whitespace-only strings.
-    /// </summary>
-    /// <param name = "invalidName">The invalid name input to test.</param>
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
@@ -1323,11 +1063,6 @@ public class UserTests
         Assert.Equal("Original Name", user.Name);
     }
 
-    /// <summary>
-    /// Tests that UpdateName successfully updates the Name property and returns success
-    /// when provided with valid name inputs.
-    /// </summary>
-    /// <param name = "validName">The valid name input to test.</param>
     [Theory]
     [InlineData("John Doe")]
     [InlineData("A")]
@@ -1355,9 +1090,6 @@ public class UserTests
         Assert.Equal(validName, user.Name);
     }
 
-    /// <summary>
-    /// Tests that UpdateName successfully handles very long name strings.
-    /// </summary>
     [Fact]
     public void UpdateName_VeryLongName_UpdatesNameAndReturnsSuccess()
     {
@@ -1373,10 +1105,6 @@ public class UserTests
         Assert.Equal(veryLongName, user.Name);
     }
 
-    /// <summary>
-    /// Tests that UpdateName preserves leading and trailing content when the name
-    /// contains spaces but is not whitespace-only.
-    /// </summary>
     [Theory]
     [InlineData(" Name")]
     [InlineData("Name ")]
@@ -1394,10 +1122,6 @@ public class UserTests
         Assert.Equal(nameWithSpaces, user.Name);
     }
 
-    /// <summary>
-    /// Tests that UpdateName can be called multiple times and correctly updates
-    /// the Name property each time.
-    /// </summary>
     [Fact]
     public void UpdateName_MultipleCalls_UpdatesNameEachTime()
     {
@@ -1418,10 +1142,6 @@ public class UserTests
         Assert.Equal("Third Update", user.Name);
     }
 
-    /// <summary>
-    /// Tests that UpdateName returns failure when attempting to update to an empty
-    /// string after having a valid name.
-    /// </summary>
     [Fact]
     public void UpdateName_UpdateValidNameToEmpty_ReturnsFailureAndPreservesOriginalName()
     {
@@ -1439,11 +1159,6 @@ public class UserTests
         Assert.Equal("Updated Name", user.Name);
     }
 
-    /// <summary>
-    /// Tests that GetRoles returns a list containing only "User" when a user is created with default roles.
-    /// Input: Newly created user with default role assignment
-    /// Expected: Returns a list with single element "User"
-    /// </summary>
     [Fact]
     public void GetRoles_DefaultUser_ReturnsSingleUserRole()
     {
@@ -1458,11 +1173,6 @@ public class UserTests
         Assert.Equal("User", roles[0]);
     }
 
-    /// <summary>
-    /// Tests that GetRoles returns multiple roles in order when roles have been added to the user.
-    /// Input: User with "User" and "Admin" roles
-    /// Expected: Returns a list containing ["User", "Admin"] in order
-    /// </summary>
     [Fact]
     public void GetRoles_UserWithMultipleRoles_ReturnsAllRolesInOrder()
     {
@@ -1479,11 +1189,6 @@ public class UserTests
         Assert.Equal("Admin", roles[1]);
     }
 
-    /// <summary>
-    /// Tests that GetRoles returns all roles when user has three or more roles.
-    /// Input: User with "User", "Admin", and "Moderator" roles
-    /// Expected: Returns a list containing all three roles in order
-    /// </summary>
     [Fact]
     public void GetRoles_UserWithThreeRoles_ReturnsAllThreeRoles()
     {
@@ -1502,11 +1207,6 @@ public class UserTests
         Assert.Equal("Moderator", roles[2]);
     }
 
-    /// <summary>
-    /// Tests that GetRoles returns only remaining roles after a role has been removed.
-    /// Input: User with "User" and "Admin" roles, then "User" role removed
-    /// Expected: Returns a list containing only "Admin"
-    /// </summary>
     [Fact]
     public void GetRoles_AfterRemovingRole_ReturnsRemainingRoles()
     {
@@ -1523,11 +1223,6 @@ public class UserTests
         Assert.Equal("Admin", roles[0]);
     }
 
-    /// <summary>
-    /// Tests that GetRoles returns a new list instance each time it is called.
-    /// Input: User with default roles, calling GetRoles twice
-    /// Expected: Returns different list instances
-    /// </summary>
     [Fact]
     public void GetRoles_CalledMultipleTimes_ReturnsNewListEachTime()
     {
@@ -1541,11 +1236,6 @@ public class UserTests
         Assert.NotSame(roles1, roles2);
     }
 
-    /// <summary>
-    /// Tests that modifications to the returned list do not affect the user's actual roles.
-    /// Input: User with default roles, modifying returned list
-    /// Expected: User's roles remain unchanged
-    /// </summary>
     [Fact]
     public void GetRoles_ModifyingReturnedList_DoesNotAffectUserRoles()
     {
@@ -1562,11 +1252,6 @@ public class UserTests
         Assert.DoesNotContain("Hacker", rolesAfterModification);
     }
 
-    /// <summary>
-    /// Tests that GetRoles correctly handles roles with various characters in their names.
-    /// Input: User with roles containing alphanumeric and special characters
-    /// Expected: Returns all roles with their exact names preserved
-    /// </summary>
     [Fact]
     public void GetRoles_RolesWithSpecialCharacters_ReturnsRolesWithCharactersPreserved()
     {
@@ -1583,11 +1268,6 @@ public class UserTests
         Assert.Contains("Level_1", roles);
     }
 
-    /// <summary>
-    /// Tests that GetRoles returns "User" role when all other roles are removed (RemoveRole ensures User remains).
-    /// Input: User with added roles, all non-default roles removed
-    /// Expected: Returns list with "User" role
-    /// </summary>
     [Fact]
     public void GetRoles_AfterRemovingAllAddedRoles_ReturnsDefaultUserRole()
     {
@@ -1606,16 +1286,6 @@ public class UserTests
         Assert.Equal("User", roles[0]);
     }
 
-    /// <summary>
-    /// Tests that UpdateLastLogin successfully updates the LastLoginAt property
-    /// and returns a success result when provided with a valid ISystemClock.
-    /// </summary>
-    /// <param name = "year">The year component of the test DateTime.</param>
-    /// <param name = "month">The month component of the test DateTime.</param>
-    /// <param name = "day">The day component of the test DateTime.</param>
-    /// <param name = "hour">The hour component of the test DateTime.</param>
-    /// <param name = "minute">The minute component of the test DateTime.</param>
-    /// <param name = "second">The second component of the test DateTime.</param>
     [Theory]
     [InlineData(2024, 1, 15, 10, 30, 0)]
     [InlineData(1, 1, 1, 0, 0, 0)] // DateTime.MinValue
@@ -1639,10 +1309,6 @@ public class UserTests
         clockMock.Verify(c => c.UtcNow, Times.Once);
     }
 
-    /// <summary>
-    /// Tests that UpdateLastLogin updates LastLoginAt from null to a specific DateTime value.
-    /// Verifies that a user with no previous login can have their LastLoginAt set.
-    /// </summary>
     [Fact]
     public void UpdateLastLogin_FirstLogin_UpdatesLastLoginAtFromNull()
     {
@@ -1662,10 +1328,6 @@ public class UserTests
         Assert.Equal(testDateTime, user.LastLoginAt);
     }
 
-    /// <summary>
-    /// Tests that UpdateLastLogin correctly updates LastLoginAt when called multiple times,
-    /// overwriting the previous value with the new clock time.
-    /// </summary>
     [Fact]
     public void UpdateLastLogin_MultipleUpdates_UpdatesLastLoginAtToLatestValue()
     {
@@ -1687,10 +1349,6 @@ public class UserTests
         Assert.Equal(secondDateTime, user.LastLoginAt);
     }
 
-    /// <summary>
-    /// Tests that UpdateLastLogin throws NullReferenceException when clock parameter is null.
-    /// Verifies that the method does not handle null clock gracefully.
-    /// </summary>
     [Fact]
     public void UpdateLastLogin_NullClock_ThrowsNullReferenceException()
     {
@@ -1701,10 +1359,6 @@ public class UserTests
         Assert.Throws<NullReferenceException>(() => user.UpdateLastLogin(null!));
     }
 
-    /// <summary>
-    /// Tests that UpdateLastLogin with DateTime.MinValue correctly sets LastLoginAt.
-    /// This is a boundary condition test for the minimum possible DateTime value.
-    /// </summary>
     [Fact]
     public void UpdateLastLogin_DateTimeMinValue_UpdatesLastLoginAtCorrectly()
     {
@@ -1721,10 +1375,6 @@ public class UserTests
         Assert.Equal(minDateTime, user.LastLoginAt);
     }
 
-    /// <summary>
-    /// Tests that UpdateLastLogin with DateTime.MaxValue correctly sets LastLoginAt.
-    /// This is a boundary condition test for the maximum possible DateTime value.
-    /// </summary>
     [Fact]
     public void UpdateLastLogin_DateTimeMaxValue_UpdatesLastLoginAtCorrectly()
     {
@@ -1741,11 +1391,6 @@ public class UserTests
         Assert.Equal(maxDateTime, user.LastLoginAt);
     }
 
-    /// <summary>
-    /// Tests that Deactivate returns a failure result when the user is already inactive.
-    /// Input: User that has already been deactivated.
-    /// Expected: Returns a failure Result with message "User already inactive" and error code "validation_error".
-    /// </summary>
     [Fact]
     public void Deactivate_WhenUserIsAlreadyInactive_ReturnsFailureWithValidationError()
     {
@@ -1762,11 +1407,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Deactivate successfully deactivates an active user.
-    /// Input: Active user.
-    /// Expected: Sets IsActive to false and returns a success Result.
-    /// </summary>
     [Fact]
     public void Deactivate_WhenUserIsActive_SetsIsActiveToFalseAndReturnsSuccess()
     {
@@ -1783,11 +1423,6 @@ public class UserTests
         Assert.Equal(string.Empty, result.Error);
     }
 
-    /// <summary>
-    /// Tests that Deactivate can only be successfully called once on an active user.
-    /// Input: Active user deactivated twice in succession.
-    /// Expected: First call succeeds, second call fails with validation error.
-    /// </summary>
     [Fact]
     public void Deactivate_WhenCalledTwice_FirstSucceedsSecondFails()
     {
@@ -1805,9 +1440,6 @@ public class UserTests
         Assert.False(user.IsActive);
     }
 
-    /// <summary>
-    /// Tests that SetRefreshToken returns failure when refreshToken is null.
-    /// </summary>
     [Fact]
     public void SetRefreshToken_NullRefreshToken_ReturnsFailure()
     {
@@ -1824,10 +1456,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that SetRefreshToken returns failure when refreshToken is empty or whitespace.
-    /// </summary>
-    /// <param name = "refreshToken">The invalid refresh token value to test.</param>
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
@@ -1851,9 +1479,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that SetRefreshToken successfully sets the refresh token and expiration date when valid input is provided.
-    /// </summary>
     [Fact]
     public void SetRefreshToken_ValidRefreshToken_SetsPropertiesAndReturnsSuccess()
     {
@@ -1871,10 +1496,6 @@ public class UserTests
         Assert.Equal(expiresAt, user.RefreshTokenExpiresAt);
     }
 
-    /// <summary>
-    /// Tests that SetRefreshToken works correctly with various DateTime boundary values.
-    /// </summary>
-    /// <param name = "expiresAtTicks">The ticks value representing the DateTime to test.</param>
     [Theory]
     [InlineData(0)] // DateTime.MinValue
     [InlineData(3155378975999999999)] // DateTime.MaxValue
@@ -1893,9 +1514,6 @@ public class UserTests
         Assert.Equal(expiresAt, user.RefreshTokenExpiresAt);
     }
 
-    /// <summary>
-    /// Tests that SetRefreshToken accepts past, present, and future dates without validation.
-    /// </summary>
     [Fact]
     public void SetRefreshToken_ValidRefreshTokenWithPastDate_SetsPropertiesAndReturnsSuccess()
     {
@@ -1912,9 +1530,6 @@ public class UserTests
         Assert.Equal(pastDate, user.RefreshTokenExpiresAt);
     }
 
-    /// <summary>
-    /// Tests that SetRefreshToken accepts very long refresh token strings.
-    /// </summary>
     [Fact]
     public void SetRefreshToken_VeryLongRefreshToken_SetsPropertiesAndReturnsSuccess()
     {
@@ -1931,9 +1546,6 @@ public class UserTests
         Assert.Equal(expiresAt, user.RefreshTokenExpiresAt);
     }
 
-    /// <summary>
-    /// Tests that SetRefreshToken accepts refresh tokens with special characters.
-    /// </summary>
     [Theory]
     [InlineData("token!@#$%^&*()")]
     [InlineData("token_with-dashes.and.dots")]
@@ -1953,9 +1565,6 @@ public class UserTests
         Assert.Equal(expiresAt, user.RefreshTokenExpiresAt);
     }
 
-    /// <summary>
-    /// Tests that SetRefreshToken overwrites previously set refresh token and expiration date.
-    /// </summary>
     [Fact]
     public void SetRefreshToken_CalledTwice_OverwritesPreviousValues()
     {
@@ -1975,11 +1584,6 @@ public class UserTests
         Assert.Equal(secondExpiresAt, user.RefreshTokenExpiresAt);
     }
 
-    /// <summary>
-    /// Tests that Activate successfully activates an inactive user.
-    /// Input: User with IsActive = false
-    /// Expected: Returns success result and sets IsActive to true
-    /// </summary>
     [Fact]
     public void Activate_WhenUserIsInactive_ReturnsSuccessAndActivatesUser()
     {
@@ -1995,11 +1599,6 @@ public class UserTests
         Assert.True(user.IsActive);
     }
 
-    /// <summary>
-    /// Tests that Activate fails when user is already active.
-    /// Input: User with IsActive = true
-    /// Expected: Returns failure result with specific error message and code, IsActive remains true
-    /// </summary>
     [Fact]
     public void Activate_WhenUserIsAlreadyActive_ReturnsFailureWithValidationError()
     {
@@ -2017,11 +1616,6 @@ public class UserTests
         Assert.True(user.IsActive);
     }
 
-    /// <summary>
-    /// Tests that calling Activate multiple times consecutively returns failure.
-    /// Input: User activated twice in a row
-    /// Expected: First activation succeeds, second activation fails with validation error
-    /// </summary>
     [Fact]
     public void Activate_WhenCalledMultipleTimes_ReturnsFailureOnSecondCall()
     {
@@ -2040,9 +1634,6 @@ public class UserTests
         Assert.True(user.IsActive);
     }
 
-    /// <summary>
-    /// Tests that RevokeAccessTokensOnly does not affect the RefreshTokenVersion.
-    /// </summary>
     [Fact]
     public void RevokeAccessTokensOnly_DoesNotAffectRefreshTokenVersion()
     {
@@ -2056,11 +1647,6 @@ public class UserTests
         Assert.Equal(initialRefreshTokenVersion, user.TokenRevocationVersion.RefreshTokenVersion);
     }
 
-    /// <summary>
-    /// Tests that RevokeAccessTokensOnly always returns success regardless of the reason parameter value.
-    /// Validates that the method handles various edge cases for the reason parameter without throwing exceptions.
-    /// </summary>
-    /// <param name = "reason">The reason string to test, including edge cases like empty strings, whitespace, special characters, and very long strings.</param>
     [Theory]
     [InlineData("Custom reason")]
     [InlineData("")]
@@ -2081,9 +1667,6 @@ public class UserTests
         Assert.Empty(result.Error);
     }
 
-    /// <summary>
-    /// Tests that Create fails when email is null.
-    /// </summary>
     [Fact]
     public void Create_WithNullEmail_ReturnsFailure()
     {
@@ -2099,10 +1682,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Create fails when email is empty or whitespace.
-    /// </summary>
-    /// <param name = "email">The email value to test.</param>
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
@@ -2124,9 +1703,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Create fails when name is null.
-    /// </summary>
     [Fact]
     public void Create_WithNullName_ReturnsFailure()
     {
@@ -2142,10 +1718,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Create fails when name is empty or whitespace.
-    /// </summary>
-    /// <param name = "name">The name value to test.</param>
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
@@ -2167,11 +1739,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Create succeeds with valid email and name.
-    /// </summary>
-    /// <param name = "email">The email value to test.</param>
-    /// <param name = "name">The name value to test.</param>
     [Theory]
     [InlineData("test@example.com", "John Doe")]
     [InlineData("user@domain.co.uk", "Jane Smith")]
@@ -2191,9 +1758,6 @@ public class UserTests
         Assert.Equal(name, result.Value.Name);
     }
 
-    /// <summary>
-    /// Tests that Create sets all properties correctly with valid parameters.
-    /// </summary>
     [Fact]
     public void Create_WithValidParameters_SetsPropertiesCorrectly()
     {
@@ -2214,10 +1778,6 @@ public class UserTests
         Assert.True(user.IsActive);
     }
 
-    /// <summary>
-    /// Tests that Create sets PasswordHash when provided.
-    /// </summary>
-    /// <param name = "passwordHash">The password hash value to test.</param>
     [Theory]
     [InlineData("hashedpassword123")]
     [InlineData("$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy")]
@@ -2235,9 +1795,6 @@ public class UserTests
         Assert.Equal(passwordHash, result.Value.PasswordHash);
     }
 
-    /// <summary>
-    /// Tests that Create sets PasswordHash to null when not provided or explicitly null.
-    /// </summary>
     [Fact]
     public void Create_WithNullPasswordHash_SetsPasswordHashToNull()
     {
@@ -2251,9 +1808,6 @@ public class UserTests
         Assert.Null(result.Value.PasswordHash);
     }
 
-    /// <summary>
-    /// Tests that Create uses default PasswordHash (null) when not specified.
-    /// </summary>
     [Fact]
     public void Create_WithoutPasswordHash_UsesDefaultNull()
     {
@@ -2267,10 +1821,6 @@ public class UserTests
         Assert.Null(result.Value.PasswordHash);
     }
 
-    /// <summary>
-    /// Tests that Create sets custom tier when provided.
-    /// </summary>
-    /// <param name = "tier">The tier value to test.</param>
     [Theory]
     [InlineData("premium")]
     [InlineData("enterprise")]
@@ -2289,9 +1839,6 @@ public class UserTests
         Assert.Equal(tier, result.Value.Tier);
     }
 
-    /// <summary>
-    /// Tests that Create uses default tier "free" when not specified.
-    /// </summary>
     [Fact]
     public void Create_WithoutTier_UsesDefaultFree()
     {
@@ -2305,9 +1852,6 @@ public class UserTests
         Assert.Equal("free", result.Value.Tier);
     }
 
-    /// <summary>
-    /// Tests that Create always sets Roles to "User".
-    /// </summary>
     [Theory]
     [InlineData("test@example.com", "John Doe", null, "free")]
     [InlineData("user@domain.com", "Jane Smith", "hash123", "premium")]
@@ -2320,9 +1864,6 @@ public class UserTests
         Assert.Equal("User", result.Value.Roles);
     }
 
-    /// <summary>
-    /// Tests that Create always generates a new non-empty Guid for Id.
-    /// </summary>
     [Fact]
     public void Create_Always_GeneratesNewId()
     {
@@ -2340,9 +1881,6 @@ public class UserTests
         Assert.NotEqual(result1.Value.Id, result2.Value.Id);
     }
 
-    /// <summary>
-    /// Tests that Create validates email before name.
-    /// </summary>
     [Fact]
     public void Create_WithBothInvalidEmailAndName_ValidatesEmailFirst()
     {
@@ -2357,9 +1895,6 @@ public class UserTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that HasRole returns true when the user has the specified role as the only role.
-    /// </summary>
     [Fact]
     public void HasRole_WithSingleMatchingRole_ReturnsTrue()
     {
@@ -2372,12 +1907,6 @@ public class UserTests
         Assert.True(hasRole);
     }
 
-    /// <summary>
-    /// Tests that HasRole returns true when the user has the specified role among multiple roles.
-    /// </summary>
-    /// <param name = "roleToAdd">The role to add to the user.</param>
-    /// <param name = "roleToCheck">The role to check for.</param>
-    /// <param name = "expected">The expected result.</param>
     [Theory]
     [InlineData("Admin", "Admin", true)]
     [InlineData("Admin", "User", true)]
@@ -2401,9 +1930,6 @@ public class UserTests
         Assert.Equal(expected, hasRole);
     }
 
-    /// <summary>
-    /// Tests that HasRole returns false when the user does not have the specified role.
-    /// </summary>
     [Fact]
     public void HasRole_WithNonExistentRole_ReturnsFalse()
     {
@@ -2416,10 +1942,6 @@ public class UserTests
         Assert.False(hasRole);
     }
 
-    /// <summary>
-    /// Tests that HasRole is case-sensitive and returns false when the case doesn't match.
-    /// </summary>
-    /// <param name = "roleToCheck">The role to check with different casing.</param>
     [Theory]
     [InlineData("user")]
     [InlineData("USER")]
@@ -2435,9 +1957,6 @@ public class UserTests
         Assert.False(hasRole);
     }
 
-    /// <summary>
-    /// Tests that HasRole returns false for partial matches.
-    /// </summary>
     [Theory]
     [InlineData("Use")]
     [InlineData("Users")]
@@ -2454,9 +1973,6 @@ public class UserTests
         Assert.False(hasRole);
     }
 
-    /// <summary>
-    /// Tests that HasRole returns false when checking for an empty string role.
-    /// </summary>
     [Fact]
     public void HasRole_WithEmptyString_ReturnsFalse()
     {
@@ -2469,10 +1985,6 @@ public class UserTests
         Assert.False(hasRole);
     }
 
-    /// <summary>
-    /// Tests that HasRole returns false when checking for a whitespace-only string role.
-    /// </summary>
-    /// <param name = "roleToCheck">The whitespace string to check.</param>
     [Theory]
     [InlineData(" ")]
     [InlineData("  ")]
@@ -2489,9 +2001,6 @@ public class UserTests
         Assert.False(hasRole);
     }
 
-    /// <summary>
-    /// Tests that HasRole does not match roles with leading or trailing spaces due to lack of trimming.
-    /// </summary>
     [Theory]
     [InlineData(" User")]
     [InlineData("User ")]
@@ -2507,9 +2016,6 @@ public class UserTests
         Assert.False(hasRole);
     }
 
-    /// <summary>
-    /// Tests that HasRole handles roles with special characters correctly.
-    /// </summary>
     [Fact]
     public void HasRole_WithSpecialCharacters_ReturnsTrue()
     {
@@ -2524,9 +2030,6 @@ public class UserTests
         Assert.True(hasRole);
     }
 
-    /// <summary>
-    /// Tests that HasRole handles very long role names correctly.
-    /// </summary>
     [Fact]
     public void HasRole_WithVeryLongRoleName_ReturnsTrue()
     {
@@ -2541,9 +2044,6 @@ public class UserTests
         Assert.True(hasRole);
     }
 
-    /// <summary>
-    /// Tests that HasRole returns false when checking for a very long role that doesn't exist.
-    /// </summary>
     [Fact]
     public void HasRole_WithVeryLongNonExistentRole_ReturnsFalse()
     {
@@ -2557,9 +2057,6 @@ public class UserTests
         Assert.False(hasRole);
     }
 
-    /// <summary>
-    /// Tests that HasRole works correctly when role is at different positions in the roles list.
-    /// </summary>
     [Theory]
     [InlineData("FirstRole", new[] { "FirstRole", "SecondRole", "ThirdRole" }, true)]
     [InlineData("SecondRole", new[] { "FirstRole", "SecondRole", "ThirdRole" }, true)]

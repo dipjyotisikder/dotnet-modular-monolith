@@ -1,14 +1,10 @@
-﻿using Xunit;
+﻿using Shared.Domain;
 using Users.Domain.Entities;
-using Shared.Domain;
 
 namespace Users.Domain.UnitTests.Entities;
 
 public class UserDeviceTests
 {
-    /// <summary>
-    /// Tests that IsRefreshTokenValid returns true when the device is not revoked and the refresh token has not expired.
-    /// </summary>
     [Fact]
     public void IsRefreshTokenValid_WhenNotRevokedAndNotExpired_ReturnsTrue()
     {
@@ -29,9 +25,6 @@ public class UserDeviceTests
         Assert.True(isValid);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenValid returns false when the device is revoked, even if the refresh token has not expired.
-    /// </summary>
     [Fact]
     public void IsRefreshTokenValid_WhenRevokedAndNotExpired_ReturnsFalse()
     {
@@ -53,9 +46,6 @@ public class UserDeviceTests
         Assert.False(isValid);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenValid returns false when the refresh token has expired, even if the device is not revoked.
-    /// </summary>
     [Fact]
     public void IsRefreshTokenValid_WhenNotRevokedAndExpired_ReturnsFalse()
     {
@@ -76,9 +66,6 @@ public class UserDeviceTests
         Assert.False(isValid);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenValid returns false when both the device is revoked and the refresh token has expired.
-    /// </summary>
     [Fact]
     public void IsRefreshTokenValid_WhenRevokedAndExpired_ReturnsFalse()
     {
@@ -100,9 +87,6 @@ public class UserDeviceTests
         Assert.False(isValid);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenValid returns false when the refresh token expires exactly at the current UTC time (boundary condition).
-    /// </summary>
     [Fact]
     public void IsRefreshTokenValid_WhenExpiresAtExactlyNow_ReturnsFalse()
     {
@@ -123,9 +107,6 @@ public class UserDeviceTests
         Assert.False(isValid);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenValid returns true when the refresh token expires just slightly in the future (boundary condition).
-    /// </summary>
     [Fact]
     public void IsRefreshTokenValid_WhenExpiresInNearFuture_ReturnsTrue()
     {
@@ -146,9 +127,6 @@ public class UserDeviceTests
         Assert.True(isValid);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenValid returns false when the refresh token expired just slightly in the past (boundary condition).
-    /// </summary>
     [Fact]
     public void IsRefreshTokenValid_WhenExpiredInNearPast_ReturnsFalse()
     {
@@ -169,9 +147,6 @@ public class UserDeviceTests
         Assert.False(isValid);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenValid returns false when the refresh token expiration is at DateTime.MinValue (extreme past boundary).
-    /// </summary>
     [Fact]
     public void IsRefreshTokenValid_WhenExpiresAtMinValue_ReturnsFalse()
     {
@@ -192,9 +167,6 @@ public class UserDeviceTests
         Assert.False(isValid);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenValid returns true when the refresh token expiration is at DateTime.MaxValue (extreme future boundary).
-    /// </summary>
     [Fact]
     public void IsRefreshTokenValid_WhenExpiresAtMaxValue_ReturnsTrue()
     {
@@ -215,9 +187,6 @@ public class UserDeviceTests
         Assert.True(isValid);
     }
 
-    /// <summary>
-    /// Tests that Revoke successfully revokes a device with the default reason when the device is not already revoked.
-    /// </summary>
     [Fact]
     public void Revoke_DeviceNotRevoked_SuccessWithDefaultReason()
     {
@@ -243,9 +212,6 @@ public class UserDeviceTests
         Assert.Equal("User initiated logout", device.RevokeReason);
     }
 
-    /// <summary>
-    /// Tests that Revoke successfully revokes a device with a custom reason when the device is not already revoked.
-    /// </summary>
     [Fact]
     public void Revoke_DeviceNotRevokedWithCustomReason_SuccessWithCustomReason()
     {
@@ -272,9 +238,6 @@ public class UserDeviceTests
         Assert.Equal(customReason, device.RevokeReason);
     }
 
-    /// <summary>
-    /// Tests that Revoke returns a failure result when attempting to revoke an already revoked device.
-    /// </summary>
     [Fact]
     public void Revoke_DeviceAlreadyRevoked_ReturnsFailure()
     {
@@ -298,9 +261,6 @@ public class UserDeviceTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Revoke correctly handles an empty string reason.
-    /// </summary>
     [Fact]
     public void Revoke_EmptyStringReason_SuccessWithEmptyReason()
     {
@@ -322,9 +282,6 @@ public class UserDeviceTests
         Assert.Equal(string.Empty, device.RevokeReason);
     }
 
-    /// <summary>
-    /// Tests that Revoke correctly handles a whitespace-only string reason.
-    /// </summary>
     [Fact]
     public void Revoke_WhitespaceReason_SuccessWithWhitespaceReason()
     {
@@ -347,9 +304,6 @@ public class UserDeviceTests
         Assert.Equal(whitespaceReason, device.RevokeReason);
     }
 
-    /// <summary>
-    /// Tests that Revoke correctly handles a very long string reason.
-    /// </summary>
     [Fact]
     public void Revoke_VeryLongReason_SuccessWithLongReason()
     {
@@ -372,9 +326,6 @@ public class UserDeviceTests
         Assert.Equal(longReason, device.RevokeReason);
     }
 
-    /// <summary>
-    /// Tests that Revoke correctly handles a reason string with special characters.
-    /// </summary>
     [Fact]
     public void Revoke_ReasonWithSpecialCharacters_SuccessWithSpecialCharacters()
     {
@@ -397,9 +348,6 @@ public class UserDeviceTests
         Assert.Equal(specialReason, device.RevokeReason);
     }
 
-    /// <summary>
-    /// Tests that Revoke correctly handles a reason string with control characters.
-    /// </summary>
     [Fact]
     public void Revoke_ReasonWithControlCharacters_SuccessWithControlCharacters()
     {
@@ -422,9 +370,6 @@ public class UserDeviceTests
         Assert.Equal(controlCharReason, device.RevokeReason);
     }
 
-    /// <summary>
-    /// Tests that Revoke preserves the original revoke reason and timestamp when attempting to revoke an already revoked device.
-    /// </summary>
     [Fact]
     public void Revoke_DeviceAlreadyRevoked_PreservesOriginalRevokeDetails()
     {
@@ -450,9 +395,6 @@ public class UserDeviceTests
         Assert.Equal(firstRevokeReason, device.RevokeReason);
     }
 
-    /// <summary>
-    /// Tests that Revoke with null reason parameter handles the null value appropriately (defensive test).
-    /// </summary>
     [Fact]
     public void Revoke_NullReason_HandlesNullValue()
     {
@@ -474,9 +416,6 @@ public class UserDeviceTests
         Assert.Null(device.RevokeReason);
     }
 
-    /// <summary>
-    /// Tests that multiple parameters are correctly set when revoking a device for the first time.
-    /// </summary>
     [Fact]
     public void Revoke_FirstRevoke_SetsAllPropertiesCorrectly()
     {
@@ -503,9 +442,6 @@ public class UserDeviceTests
         Assert.Equal(reason, device.RevokeReason);
     }
 
-    /// <summary>
-    /// Tests that Create returns failure when userId is Guid.Empty.
-    /// </summary>
     [Fact]
     public void Create_UserIdIsEmpty_ReturnsFailureWithValidationError()
     {
@@ -526,10 +462,6 @@ public class UserDeviceTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Create returns failure when deviceId is null, empty, or whitespace.
-    /// </summary>
-    /// <param name="deviceId">The device ID to test.</param>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -556,10 +488,6 @@ public class UserDeviceTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Create returns failure when deviceName is null, empty, or whitespace.
-    /// </summary>
-    /// <param name="deviceName">The device name to test.</param>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -586,10 +514,6 @@ public class UserDeviceTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Create returns failure when refreshToken is null, empty, or whitespace.
-    /// </summary>
-    /// <param name="refreshToken">The refresh token to test.</param>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -616,9 +540,6 @@ public class UserDeviceTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that Create successfully creates a UserDevice with all required parameters.
-    /// </summary>
     [Fact]
     public void Create_ValidRequiredParameters_ReturnsSuccessWithUserDevice()
     {
@@ -653,9 +574,6 @@ public class UserDeviceTests
         Assert.Null(result.Value.RevokeReason);
     }
 
-    /// <summary>
-    /// Tests that Create successfully creates a UserDevice with all parameters including optional ones.
-    /// </summary>
     [Fact]
     public void Create_ValidAllParameters_ReturnsSuccessWithUserDeviceIncludingOptionalFields()
     {
@@ -690,9 +608,6 @@ public class UserDeviceTests
         Assert.False(result.Value.IsRevoked);
     }
 
-    /// <summary>
-    /// Tests that Create accepts null for optional deviceType parameter.
-    /// </summary>
     [Fact]
     public void Create_DeviceTypeIsNull_ReturnsSuccessWithNullDeviceType()
     {
@@ -711,9 +626,6 @@ public class UserDeviceTests
         Assert.Null(result.Value.DeviceType);
     }
 
-    /// <summary>
-    /// Tests that Create accepts null for optional ipAddress parameter.
-    /// </summary>
     [Fact]
     public void Create_IpAddressIsNull_ReturnsSuccessWithNullIpAddress()
     {
@@ -732,9 +644,6 @@ public class UserDeviceTests
         Assert.Null(result.Value.IpAddress);
     }
 
-    /// <summary>
-    /// Tests that Create accepts empty string for optional deviceType parameter.
-    /// </summary>
     [Fact]
     public void Create_DeviceTypeIsEmpty_ReturnsSuccessWithEmptyDeviceType()
     {
@@ -753,9 +662,6 @@ public class UserDeviceTests
         Assert.Equal(string.Empty, result.Value.DeviceType);
     }
 
-    /// <summary>
-    /// Tests that Create accepts empty string for optional ipAddress parameter.
-    /// </summary>
     [Fact]
     public void Create_IpAddressIsEmpty_ReturnsSuccessWithEmptyIpAddress()
     {
@@ -774,11 +680,6 @@ public class UserDeviceTests
         Assert.Equal(string.Empty, result.Value.IpAddress);
     }
 
-    /// <summary>
-    /// Tests that Create handles various DateTime values for refreshTokenExpiresAt parameter.
-    /// </summary>
-    /// <param name="testCase">Description of the test case.</param>
-    /// <param name="daysOffset">Offset in days from UtcNow to create the test DateTime.</param>
     [Theory]
     [InlineData("Past date", -30)]
     [InlineData("Current date", 0)]
@@ -800,9 +701,6 @@ public class UserDeviceTests
         Assert.Equal(refreshTokenExpiresAt, result.Value.RefreshTokenExpiresAt);
     }
 
-    /// <summary>
-    /// Tests that Create handles DateTime.MinValue for refreshTokenExpiresAt parameter.
-    /// </summary>
     [Fact]
     public void Create_RefreshTokenExpiresAtIsMinValue_ReturnsSuccess()
     {
@@ -821,9 +719,6 @@ public class UserDeviceTests
         Assert.Equal(DateTime.MinValue, result.Value.RefreshTokenExpiresAt);
     }
 
-    /// <summary>
-    /// Tests that Create handles DateTime.MaxValue for refreshTokenExpiresAt parameter.
-    /// </summary>
     [Fact]
     public void Create_RefreshTokenExpiresAtIsMaxValue_ReturnsSuccess()
     {
@@ -842,9 +737,6 @@ public class UserDeviceTests
         Assert.Equal(DateTime.MaxValue, result.Value.RefreshTokenExpiresAt);
     }
 
-    /// <summary>
-    /// Tests that Create accepts very long strings for required string parameters.
-    /// </summary>
     [Fact]
     public void Create_VeryLongStrings_ReturnsSuccess()
     {
@@ -865,9 +757,6 @@ public class UserDeviceTests
         Assert.Equal(refreshToken, result.Value.RefreshToken);
     }
 
-    /// <summary>
-    /// Tests that Create accepts strings with special characters.
-    /// </summary>
     [Fact]
     public void Create_StringsWithSpecialCharacters_ReturnsSuccess()
     {
@@ -888,9 +777,6 @@ public class UserDeviceTests
         Assert.Equal(refreshToken, result.Value.RefreshToken);
     }
 
-    /// <summary>
-    /// Tests that Create generates unique IDs for each UserDevice instance.
-    /// </summary>
     [Fact]
     public void Create_CalledMultipleTimes_GeneratesUniqueIds()
     {
@@ -911,10 +797,6 @@ public class UserDeviceTests
         Assert.NotEqual(result1.Value.Id, result2.Value.Id);
     }
 
-    /// <summary>
-    /// Tests that UpdateLastActivity returns success and updates LastActivityAt
-    /// when the device is not revoked.
-    /// </summary>
     [Fact]
     public void UpdateLastActivity_WhenDeviceNotRevoked_ReturnsSuccessAndUpdatesLastActivityAt()
     {
@@ -940,10 +822,6 @@ public class UserDeviceTests
         Assert.True(device.LastActivityAt <= afterUpdate);
     }
 
-    /// <summary>
-    /// Tests that UpdateLastActivity returns failure with correct error message and code
-    /// when the device is revoked, and does not update LastActivityAt.
-    /// </summary>
     [Fact]
     public void UpdateLastActivity_WhenDeviceIsRevoked_ReturnsFailureAndDoesNotUpdateLastActivityAt()
     {
@@ -971,10 +849,6 @@ public class UserDeviceTests
         Assert.Equal(lastActivityBeforeUpdate, device.LastActivityAt);
     }
 
-    /// <summary>
-    /// Tests that UpdateLastActivity returns failure when device is already revoked,
-    /// regardless of the revoke reason.
-    /// </summary>
     [Theory]
     [InlineData("User initiated logout")]
     [InlineData("Security breach")]
@@ -1003,10 +877,6 @@ public class UserDeviceTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
-    /// <summary>
-    /// Tests that UpdateLastActivity can be called multiple times on a non-revoked device
-    /// and successfully updates LastActivityAt each time.
-    /// </summary>
     [Fact]
     public void UpdateLastActivity_WhenCalledMultipleTimesOnNonRevokedDevice_SuccessfullyUpdatesEachTime()
     {
@@ -1035,9 +905,6 @@ public class UserDeviceTests
         Assert.True(lastActivityAfterSecond >= lastActivityAfterFirst);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenExpired returns false when the refresh token expiration time is in the future.
-    /// </summary>
     [Fact]
     public void IsRefreshTokenExpired_WhenExpirationTimeIsInFuture_ReturnsFalse()
     {
@@ -1058,9 +925,6 @@ public class UserDeviceTests
         Assert.False(isExpired);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenExpired returns true when the refresh token expiration time is in the past.
-    /// </summary>
     [Fact]
     public void IsRefreshTokenExpired_WhenExpirationTimeIsInPast_ReturnsTrue()
     {
@@ -1081,9 +945,6 @@ public class UserDeviceTests
         Assert.True(isExpired);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenExpired returns true when the refresh token expiration time is DateTime.MinValue.
-    /// </summary>
     [Fact]
     public void IsRefreshTokenExpired_WhenExpirationTimeIsMinValue_ReturnsTrue()
     {
@@ -1104,9 +965,6 @@ public class UserDeviceTests
         Assert.True(isExpired);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenExpired returns false when the refresh token expiration time is DateTime.MaxValue.
-    /// </summary>
     [Fact]
     public void IsRefreshTokenExpired_WhenExpirationTimeIsMaxValue_ReturnsFalse()
     {
@@ -1127,9 +985,6 @@ public class UserDeviceTests
         Assert.False(isExpired);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenExpired returns true when the refresh token expiration time is far in the past.
-    /// </summary>
     [Fact]
     public void IsRefreshTokenExpired_WhenExpirationTimeIsFarInPast_ReturnsTrue()
     {
@@ -1150,9 +1005,6 @@ public class UserDeviceTests
         Assert.True(isExpired);
     }
 
-    /// <summary>
-    /// Tests that IsRefreshTokenExpired returns false when the refresh token expiration time is far in the future.
-    /// </summary>
     [Fact]
     public void IsRefreshTokenExpired_WhenExpirationTimeIsFarInFuture_ReturnsFalse()
     {
