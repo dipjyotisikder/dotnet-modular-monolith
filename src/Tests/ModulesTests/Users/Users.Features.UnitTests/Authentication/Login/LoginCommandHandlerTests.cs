@@ -1,4 +1,12 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.Identity;
+using Moq;
+using Shared.Domain;
+using Shared.Domain.Repositories;
+using Shared.Domain.Services;
+using Users.Domain.Entities;
+using Users.Domain.Repositories;
+using Users.Domain.Services;
+using Users.Features.Authentication.Login;
 
 
 namespace Users.Features.UnitTests.Authentication.Login;

@@ -1,4 +1,8 @@
-﻿namespace Users.Features.UnitTests.UserManagement.CreateUser;
+﻿using Xunit;
+using FluentValidation.TestHelper;
+using Users.Features.UserManagement.CreateUser;
+
+namespace Users.Features.UnitTests.UserManagement.CreateUser;
 
 /// <summary>
 /// Unit tests for <see cref="CreateUserCommandValidator"/>.

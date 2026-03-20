@@ -1,4 +1,9 @@
 ﻿using Moq;
+using Xunit;
+using Users.Domain.Entities;
+using Users.Domain.ValueObjects;
+using Shared.Domain;
+using Shared.Domain.Services;
 
 namespace Users.Domain.UnitTests.Entities;
 /// <summary>

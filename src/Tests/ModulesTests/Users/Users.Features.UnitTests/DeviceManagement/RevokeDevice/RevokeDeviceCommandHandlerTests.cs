@@ -1,4 +1,9 @@
 ﻿using Moq;
+using Shared.Domain;
+using Shared.Domain.Repositories;
+using Users.Domain.Entities;
+using Users.Domain.Repositories;
+using Users.Features.DeviceManagement.RevokeDevice;
 
 
 namespace Users.Features.UnitTests.DeviceManagement.RevokeDevice;

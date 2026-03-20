@@ -1,5 +1,9 @@
 ﻿using Moq;
-
+using Xunit;
+using Users.Domain.Entities;
+using Shared.Domain;
+using Users.Features.DeviceManagement.GetUserDevices;
+using Users.Domain.Repositories;
 
 namespace Users.Features.UnitTests.DeviceManagement.GetUserDevices;
 

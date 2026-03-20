@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.Routing;
+using Moq;
+using Users.Features.Authentication.Logout;
 
 
 namespace Users.Features.UnitTests.Authentication.Logout;

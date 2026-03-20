@@ -1,4 +1,7 @@
-﻿namespace Users.Features.UnitTests.Authentication.Login;
+﻿using Microsoft.AspNetCore.Routing;
+using Users.Features.Authentication.Login;
+
+namespace Users.Features.UnitTests.Authentication.Login;
 
 /// <summary>
 /// Unit tests for the <see cref="LoginEndpoint"/> class.

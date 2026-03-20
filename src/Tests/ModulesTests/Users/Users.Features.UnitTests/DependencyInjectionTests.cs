@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 
 namespace Users.Features.UnitTests;

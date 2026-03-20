@@ -1,4 +1,8 @@
-﻿namespace Users.Features.UnitTests.UserManagement.GetUsers;
+﻿using Xunit;
+using Microsoft.AspNetCore.Routing;
+using Users.Features.UserManagement.GetUsers;
+
+namespace Users.Features.UnitTests.UserManagement.GetUsers;
 
 /// <summary>
 /// Unit tests for <see cref="GetUsersEndpoint"/>.

@@ -1,6 +1,11 @@
 ﻿using Moq;
 using System.Linq.Expressions;
-
+using Xunit;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Bookings.Domain.Entities;
+using Bookings.Infrastructure.Persistence.Configurations;
+using Microsoft.EntityFrameworkCore;
+using Bookings.Domain.ValueObjects;
 
 namespace Bookings.Infrastructure.UnitTests.Persistence.Configurations;
 

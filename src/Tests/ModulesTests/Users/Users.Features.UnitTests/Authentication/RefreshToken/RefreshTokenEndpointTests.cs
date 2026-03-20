@@ -1,4 +1,7 @@
-﻿namespace Users.Features.UnitTests.Authentication.RefreshToken;
+﻿using Microsoft.AspNetCore.Routing;
+using Users.Features.Authentication.RefreshToken;
+
+namespace Users.Features.UnitTests.Authentication.RefreshToken;
 
 /// <summary>
 /// Unit tests for <see cref="RefreshTokenEndpoint"/> class.

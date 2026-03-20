@@ -1,4 +1,13 @@
-﻿namespace AppHost.UnitTests.Infrastructure.Persistence;
+﻿using Xunit;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Shared.Infrastructure.Persistence;
+using Users.Infrastructure.Persistence;
+using Bookings.Infrastructure.Persistence;
+using AppHost.Infrastructure.Persistence;
+
+namespace AppHost.UnitTests.Infrastructure.Persistence;
 /// <summary>
 /// Unit tests for the <see cref = "MigrationExtensions"/> class.
 /// </summary>
