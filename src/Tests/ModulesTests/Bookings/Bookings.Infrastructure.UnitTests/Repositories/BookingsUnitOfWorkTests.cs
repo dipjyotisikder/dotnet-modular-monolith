@@ -24,10 +24,18 @@ public class BookingsUnitOfWorkTests
         var mockTransaction = new Mock<IDbContextTransaction>();
         var mockDatabase = new Mock<DatabaseFacade>(Mock.Of<DbContext>());
         mockDatabase.Setup(d => d.BeginTransactionAsync(It.IsAny<CancellationToken>())).ReturnsAsync(mockTransaction.Object);
+        var mockClock = new Mock<ISystemClock>();
+        var mockUserContext = new Mock<IUserContext>();
+        var mockScopeFactory = new Mock<IServiceScopeFactory>();
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var domainEventInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockScopeFactory.Object);
+        var options = new DbContextOptionsBuilder<BookingsDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
         var mockContext = new Mock<BookingsDbContext>(
-            Mock.Of<DbContextOptions<BookingsDbContext>>(),
-            Mock.Of<AuditableEntityInterceptor>(),
-            Mock.Of<DomainEventOutboxInterceptor>());
+            options,
+            auditableInterceptor,
+            domainEventInterceptor);
         mockContext.Setup(c => c.Database).Returns(mockDatabase.Object);
         var unitOfWork = new BookingsUnitOfWork(mockContext.Object);
         // Act
@@ -48,7 +56,18 @@ public class BookingsUnitOfWorkTests
         var expectedException = new InvalidOperationException("Database error");
         var mockDatabase = new Mock<DatabaseFacade>(Mock.Of<DbContext>());
         mockDatabase.Setup(d => d.BeginTransactionAsync(It.IsAny<CancellationToken>())).ThrowsAsync(expectedException);
-        var mockContext = new Mock<BookingsDbContext>(Mock.Of<DbContextOptions<BookingsDbContext>>());
+        var mockClock = new Mock<ISystemClock>();
+        var mockUserContext = new Mock<IUserContext>();
+        var mockScopeFactory = new Mock<IServiceScopeFactory>();
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var domainEventInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockScopeFactory.Object);
+        var options = new DbContextOptionsBuilder<BookingsDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        var mockContext = new Mock<BookingsDbContext>(
+            options,
+            auditableInterceptor,
+            domainEventInterceptor);
         mockContext.Setup(c => c.Database).Returns(mockDatabase.Object);
         var unitOfWork = new BookingsUnitOfWork(mockContext.Object);
         // Act & Assert
@@ -143,9 +162,12 @@ public class BookingsUnitOfWorkTests
     {
         // Arrange
         var options = new DbContextOptionsBuilder<BookingsDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
-        var mockAuditableInterceptor = new Mock<AuditableEntityInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IUserContext>());
-        var mockOutboxInterceptor = new Mock<DomainEventOutboxInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IServiceScopeFactory>());
-        var mockContext = new Mock<BookingsDbContext>(options, mockAuditableInterceptor.Object, mockOutboxInterceptor.Object);
+        var mockClock = new Mock<ISystemClock>();
+        var mockUserContext = new Mock<IUserContext>();
+        var mockScopeFactory = new Mock<IServiceScopeFactory>();
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var outboxInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockScopeFactory.Object);
+        var mockContext = new Mock<BookingsDbContext>(options, auditableInterceptor, outboxInterceptor);
         var cts = new CancellationTokenSource();
         var cancellationToken = cts.Token;
         mockContext.Setup(c => c.SaveChangesAsync(cancellationToken)).ReturnsAsync(1);
@@ -168,9 +190,12 @@ public class BookingsUnitOfWorkTests
         mockTransaction.Setup(t => t.CommitAsync(It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
         mockTransaction.Setup(t => t.DisposeAsync()).Returns(ValueTask.CompletedTask);
         var options = new DbContextOptionsBuilder<BookingsDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
-        var mockAuditableInterceptor = new Mock<AuditableEntityInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IUserContext>());
-        var mockOutboxInterceptor = new Mock<DomainEventOutboxInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IServiceScopeFactory>());
-        var mockContext = new Mock<BookingsDbContext>(options, mockAuditableInterceptor.Object, mockOutboxInterceptor.Object);
+        var mockClock = new Mock<ISystemClock>();
+        var mockUserContext = new Mock<IUserContext>();
+        var mockScopeFactory = new Mock<IServiceScopeFactory>();
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var outboxInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockScopeFactory.Object);
+        var mockContext = new Mock<BookingsDbContext>(options, auditableInterceptor, outboxInterceptor);
         var mockDatabase = new Mock<DatabaseFacade>(Mock.Of<DbContext>());
         mockDatabase.Setup(d => d.BeginTransactionAsync(It.IsAny<CancellationToken>())).ReturnsAsync(mockTransaction.Object);
         mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
@@ -196,9 +221,12 @@ public class BookingsUnitOfWorkTests
         // Arrange
         var expectedException = new InvalidOperationException("Save failed");
         var options = new DbContextOptionsBuilder<BookingsDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
-        var mockAuditableInterceptor = new Mock<AuditableEntityInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IUserContext>());
-        var mockOutboxInterceptor = new Mock<DomainEventOutboxInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IServiceScopeFactory>());
-        var mockContext = new Mock<BookingsDbContext>(options, mockAuditableInterceptor.Object, mockOutboxInterceptor.Object);
+        var mockClock = new Mock<ISystemClock>();
+        var mockUserContext = new Mock<IUserContext>();
+        var mockScopeFactory = new Mock<IServiceScopeFactory>();
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var outboxInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockScopeFactory.Object);
+        var mockContext = new Mock<BookingsDbContext>(options, auditableInterceptor, outboxInterceptor);
         mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ThrowsAsync(expectedException);
         var unitOfWork = new BookingsUnitOfWork(mockContext.Object);
         var cancellationToken = CancellationToken.None;
@@ -223,9 +251,12 @@ public class BookingsUnitOfWorkTests
         var mockDatabase = new Mock<DatabaseFacade>(Mock.Of<DbContext>());
         mockDatabase.Setup(d => d.BeginTransactionAsync(It.IsAny<CancellationToken>())).ReturnsAsync(mockTransaction.Object);
         var options = new DbContextOptionsBuilder<BookingsDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
-        var mockAuditableInterceptor = new Mock<AuditableEntityInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IUserContext>());
-        var mockOutboxInterceptor = new Mock<DomainEventOutboxInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IServiceScopeFactory>());
-        var mockContext = new Mock<BookingsDbContext>(options, mockAuditableInterceptor.Object, mockOutboxInterceptor.Object);
+        var mockClock = new Mock<ISystemClock>();
+        var mockUserContext = new Mock<IUserContext>();
+        var mockScopeFactory = new Mock<IServiceScopeFactory>();
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var outboxInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockScopeFactory.Object);
+        var mockContext = new Mock<BookingsDbContext>(options, auditableInterceptor, outboxInterceptor);
         mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(1);
         mockContext.Setup(c => c.Database).Returns(mockDatabase.Object);
         var unitOfWork = new BookingsUnitOfWork(mockContext.Object);
@@ -254,9 +285,12 @@ public class BookingsUnitOfWorkTests
         var mockDatabase = new Mock<DatabaseFacade>(Mock.Of<DbContext>());
         mockDatabase.Setup(d => d.BeginTransactionAsync(It.IsAny<CancellationToken>())).ReturnsAsync(mockTransaction.Object);
         var options = new DbContextOptionsBuilder<BookingsDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
-        var mockAuditableInterceptor = new Mock<AuditableEntityInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IUserContext>());
-        var mockOutboxInterceptor = new Mock<DomainEventOutboxInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IServiceScopeFactory>());
-        var mockContext = new Mock<BookingsDbContext>(options, mockAuditableInterceptor.Object, mockOutboxInterceptor.Object);
+        var mockClock = new Mock<ISystemClock>();
+        var mockUserContext = new Mock<IUserContext>();
+        var mockScopeFactory = new Mock<IServiceScopeFactory>();
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var outboxInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockScopeFactory.Object);
+        var mockContext = new Mock<BookingsDbContext>(options, auditableInterceptor, outboxInterceptor);
         mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ThrowsAsync(expectedException);
         mockContext.Setup(c => c.Database).Returns(mockDatabase.Object);
         var unitOfWork = new BookingsUnitOfWork(mockContext.Object);
@@ -321,12 +355,17 @@ public class BookingsUnitOfWorkTests
     }
 
     /// <summary>
-    /// Creates a mock BookingsDbContext with DbContextOptions.
+    /// Creates a mock BookingsDbContext with DbContextOptions and interceptors.
     /// </summary>
     private static Mock<BookingsDbContext> CreateMockContext()
     {
         var options = new DbContextOptionsBuilder<BookingsDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
-        return new Mock<BookingsDbContext>(options);
+        var mockClock = new Mock<ISystemClock>();
+        var mockUserContext = new Mock<IUserContext>();
+        var mockScopeFactory = new Mock<IServiceScopeFactory>();
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var domainEventInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockScopeFactory.Object);
+        return new Mock<BookingsDbContext>(options, auditableInterceptor, domainEventInterceptor);
     }
 
     /// <summary>
@@ -539,7 +578,7 @@ public class BookingsUnitOfWorkTests
     public async Task DisposeAsync_WhenTransactionIsNull_OnlyDisposesContext()
     {
         // Arrange
-        var mockContext = new Mock<BookingsDbContext>();
+        var mockContext = CreateMockContext();
         var unitOfWork = new BookingsUnitOfWork(mockContext.Object);
         // Act
         await ((IAsyncDisposable)unitOfWork).DisposeAsync();
@@ -594,9 +633,9 @@ public class BookingsUnitOfWorkTests
         var mockClock = new Mock<Shared.Domain.Services.ISystemClock>();
         var mockUserContext = new Mock<Shared.Domain.Services.IUserContext>();
         var mockScopeFactory = new Mock<Microsoft.Extensions.DependencyInjection.IServiceScopeFactory>();
-        var mockAuditInterceptor = new Mock<AuditableEntityInterceptor>(mockClock.Object, mockUserContext.Object);
-        var mockOutboxInterceptor = new Mock<DomainEventOutboxInterceptor>(mockClock.Object, mockScopeFactory.Object);
-        var mockContext = new Mock<BookingsDbContext>(mockOptions, mockAuditInterceptor.Object, mockOutboxInterceptor.Object);
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var outboxInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockScopeFactory.Object);
+        var mockContext = new Mock<BookingsDbContext>(mockOptions, auditableInterceptor, outboxInterceptor);
         var unitOfWork = new BookingsUnitOfWork(mockContext.Object);
         // Act
         await ((IAsyncDisposable)unitOfWork).DisposeAsync();
@@ -619,9 +658,9 @@ public class BookingsUnitOfWorkTests
         var mockClock = new Mock<Shared.Domain.Services.ISystemClock>();
         var mockUserContext = new Mock<Shared.Domain.Services.IUserContext>();
         var mockServiceScopeFactory = new Mock<Microsoft.Extensions.DependencyInjection.IServiceScopeFactory>();
-        var mockAuditInterceptor = new Mock<Shared.Infrastructure.Persistence.Interceptors.AuditableEntityInterceptor>(mockClock.Object, mockUserContext.Object);
-        var mockEventInterceptor = new Mock<Shared.Infrastructure.Persistence.Interceptors.DomainEventOutboxInterceptor>(mockClock.Object, mockServiceScopeFactory.Object);
-        var mockContext = new Mock<BookingsDbContext>(options, mockAuditInterceptor.Object, mockEventInterceptor.Object);
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var eventInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockServiceScopeFactory.Object);
+        var mockContext = new Mock<BookingsDbContext>(options, auditableInterceptor, eventInterceptor);
         var mockDatabase = new Mock<Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade>(mockContext.Object);
         mockDatabase.Setup(d => d.BeginTransactionAsync(default)).ReturnsAsync(mockTransaction.Object);
         mockContext.Setup(c => c.Database).Returns(mockDatabase.Object);
@@ -649,9 +688,9 @@ public class BookingsUnitOfWorkTests
         var mockClock = new Mock<ISystemClock>();
         var mockUserContext = new Mock<IUserContext>();
         var mockServiceScopeFactory = new Mock<IServiceScopeFactory>();
-        var mockAuditableInterceptor = new Mock<AuditableEntityInterceptor>(mockClock.Object, mockUserContext.Object);
-        var mockDomainEventInterceptor = new Mock<DomainEventOutboxInterceptor>(mockClock.Object, mockServiceScopeFactory.Object);
-        var mockContext = new Mock<BookingsDbContext>(mockOptions, mockAuditableInterceptor.Object, mockDomainEventInterceptor.Object);
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var domainEventInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockServiceScopeFactory.Object);
+        var mockContext = new Mock<BookingsDbContext>(mockOptions, auditableInterceptor, domainEventInterceptor);
         mockContext.Setup(c => c.DisposeAsync()).ThrowsAsync(expectedException);
         var unitOfWork = new BookingsUnitOfWork(mockContext.Object);
         // Act & Assert
@@ -674,16 +713,15 @@ public class BookingsUnitOfWorkTests
         var options = new DbContextOptionsBuilder<BookingsDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
             .Options;
-        var mockAuditableInterceptor = new Mock<Shared.Infrastructure.Persistence.Interceptors.AuditableEntityInterceptor>(
-            Mock.Of<Shared.Domain.Services.ISystemClock>(),
-            Mock.Of<Shared.Domain.Services.IUserContext>());
-        var mockDomainEventInterceptor = new Mock<Shared.Infrastructure.Persistence.Interceptors.DomainEventOutboxInterceptor>(
-            Mock.Of<Shared.Domain.Services.ISystemClock>(),
-            Mock.Of<Microsoft.Extensions.DependencyInjection.IServiceScopeFactory>());
+        var mockClock = new Mock<Shared.Domain.Services.ISystemClock>();
+        var mockUserContext = new Mock<Shared.Domain.Services.IUserContext>();
+        var mockScopeFactory = new Mock<Microsoft.Extensions.DependencyInjection.IServiceScopeFactory>();
+        var auditableInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var domainEventInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockScopeFactory.Object);
         var mockContext = new Mock<BookingsDbContext>(
             options,
-            mockAuditableInterceptor.Object,
-            mockDomainEventInterceptor.Object);
+            auditableInterceptor,
+            domainEventInterceptor);
         mockContext.CallBase = false;
         var mockDatabase = new Mock<Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade>(mockContext.Object);
         mockDatabase.Setup(d => d.BeginTransactionAsync(default)).ReturnsAsync(mockTransaction.Object);
@@ -705,7 +743,7 @@ public class BookingsUnitOfWorkTests
     {
         // Arrange
         const int expectedChanges = 5;
-        var mockContext = new Mock<BookingsDbContext>();
+        var mockContext = CreateMockContext();
         mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(expectedChanges);
         var unitOfWork = new BookingsUnitOfWork(mockContext.Object);
         // Act
@@ -783,7 +821,7 @@ public class BookingsUnitOfWorkTests
     public async Task SaveChangesAsync_MultipleEntitiesSaved_ReturnsCorrectCount(int savedCount)
     {
         // Arrange
-        var mockContext = new Mock<BookingsDbContext>();
+        var mockContext = CreateMockContext();
         mockContext.Setup(c => c.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(savedCount);
         var unitOfWork = new BookingsUnitOfWork(mockContext.Object);
         // Act
@@ -803,12 +841,11 @@ public class BookingsUnitOfWorkTests
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
         var cancellationToken = cancellationTokenSource.Token;
-        var auditableEntityInterceptor = new Mock<AuditableEntityInterceptor>(
-            Mock.Of<Shared.Domain.Services.ISystemClock>(),
-            Mock.Of<Shared.Domain.Services.IUserContext>()).Object;
-        var domainEventOutboxInterceptor = new Mock<DomainEventOutboxInterceptor>(
-            Mock.Of<Shared.Domain.Services.ISystemClock>(),
-            Mock.Of<Microsoft.Extensions.DependencyInjection.IServiceScopeFactory>()).Object;
+        var mockClock = new Mock<Shared.Domain.Services.ISystemClock>();
+        var mockUserContext = new Mock<Shared.Domain.Services.IUserContext>();
+        var mockScopeFactory = new Mock<Microsoft.Extensions.DependencyInjection.IServiceScopeFactory>();
+        var auditableEntityInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var domainEventOutboxInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockScopeFactory.Object);
         var mockContext = new Mock<BookingsDbContext>(
             new DbContextOptionsBuilder<BookingsDbContext>().Options,
             auditableEntityInterceptor,

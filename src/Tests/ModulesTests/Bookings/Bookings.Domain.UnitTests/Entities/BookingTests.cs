@@ -73,10 +73,10 @@ public class BookingTests
         var userId = shouldMatch ? guestId : Guid.NewGuid();
         var hotelId = Guid.NewGuid();
         var roomId = Guid.NewGuid();
-        var dateRangeMock = Mock.Of<DateRange>();
-        var moneyMock = Mock.Of<Money>();
+        var dateRange = DateRange.Create(DateTime.UtcNow.Date.AddDays(1), DateTime.UtcNow.Date.AddDays(3)).Value;
+        var money = Money.Create(100m, "USD").Value;
 
-        var bookingResult = Booking.Create(guestId, hotelId, roomId, dateRangeMock, moneyMock);
+        var bookingResult = Booking.Create(guestId, hotelId, roomId, dateRange, money);
         var booking = bookingResult.Value;
 
         // Act

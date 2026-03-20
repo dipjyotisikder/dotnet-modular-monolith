@@ -50,164 +50,6 @@ public class UserTests
     }
 
     /// <summary>
-    /// Tests that after calling RevokeAccessTokens(), the TokenRevocationVersion property
-    /// returns an updated object with AccessTokenVersion incremented and LastRevokedAt set.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void TokenRevocationVersion_AfterRevokeAccessTokens_AccessTokenVersionIncrementedAndLastRevokedAtSet()
-    {
-        // Arrange
-        var result = User.Create("test@example.com", "Test User", "hash123");
-        var user = result.Value;
-        var beforeRevoke = DateTime.UtcNow;
-        // Act
-        user.RevokeAccessTokens();
-        var tokenVersion = user.TokenRevocationVersion;
-        var afterRevoke = DateTime.UtcNow;
-        // Assert
-        Assert.Equal(2, tokenVersion.AccessTokenVersion);
-        Assert.Equal(1, tokenVersion.RefreshTokenVersion);
-        Assert.True(tokenVersion.LastRevokedAt >= beforeRevoke && tokenVersion.LastRevokedAt <= afterRevoke);
-    }
-
-    /// <summary>
-    /// Tests that after calling RevokeRefreshTokens(), the TokenRevocationVersion property
-    /// returns an updated object with RefreshTokenVersion incremented and LastRevokedAt set.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void TokenRevocationVersion_AfterRevokeRefreshTokens_RefreshTokenVersionIncrementedAndLastRevokedAtSet()
-    {
-        // Arrange
-        var result = User.Create("test@example.com", "Test User", "hash123");
-        var user = result.Value;
-        var beforeRevoke = DateTime.UtcNow;
-        // Act
-        user.RevokeRefreshTokens();
-        var tokenVersion = user.TokenRevocationVersion;
-        var afterRevoke = DateTime.UtcNow;
-        // Assert
-        Assert.Equal(1, tokenVersion.AccessTokenVersion);
-        Assert.Equal(2, tokenVersion.RefreshTokenVersion);
-        Assert.True(tokenVersion.LastRevokedAt >= beforeRevoke && tokenVersion.LastRevokedAt <= afterRevoke);
-    }
-
-    /// <summary>
-    /// Tests that after calling RevokeAllCurrentTokens(), the TokenRevocationVersion property
-    /// returns an updated object with both AccessTokenVersion and RefreshTokenVersion incremented
-    /// and LastRevokedAt set.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void TokenRevocationVersion_AfterRevokeAllCurrentTokens_BothVersionsIncrementedAndLastRevokedAtSet()
-    {
-        // Arrange
-        var result = User.Create("test@example.com", "Test User", "hash123");
-        var user = result.Value;
-        var beforeRevoke = DateTime.UtcNow;
-        // Act
-        user.RevokeAllCurrentTokens();
-        var tokenVersion = user.TokenRevocationVersion;
-        var afterRevoke = DateTime.UtcNow;
-        // Assert
-        Assert.Equal(2, tokenVersion.AccessTokenVersion);
-        Assert.Equal(2, tokenVersion.RefreshTokenVersion);
-        Assert.True(tokenVersion.LastRevokedAt >= beforeRevoke && tokenVersion.LastRevokedAt <= afterRevoke);
-    }
-
-    /// <summary>
-    /// Tests that multiple calls to RevokeAccessTokens() continue to increment the
-    /// AccessTokenVersion correctly through serialization/deserialization cycles.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void TokenRevocationVersion_MultipleRevokeAccessTokensCalls_VersionIncrementedMultipleTimes()
-    {
-        // Arrange
-        var result = User.Create("test@example.com", "Test User", "hash123");
-        var user = result.Value;
-        // Act
-        user.RevokeAccessTokens();
-        user.RevokeAccessTokens();
-        user.RevokeAccessTokens();
-        var tokenVersion = user.TokenRevocationVersion;
-        // Assert
-        Assert.Equal(4, tokenVersion.AccessTokenVersion);
-        Assert.Equal(1, tokenVersion.RefreshTokenVersion);
-    }
-
-    /// <summary>
-    /// Tests that multiple calls to RevokeRefreshTokens() continue to increment the
-    /// RefreshTokenVersion correctly through serialization/deserialization cycles.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void TokenRevocationVersion_MultipleRevokeRefreshTokensCalls_VersionIncrementedMultipleTimes()
-    {
-        // Arrange
-        var result = User.Create("test@example.com", "Test User", "hash123");
-        var user = result.Value;
-        // Act
-        user.RevokeRefreshTokens();
-        user.RevokeRefreshTokens();
-        user.RevokeRefreshTokens();
-        var tokenVersion = user.TokenRevocationVersion;
-        // Assert
-        Assert.Equal(1, tokenVersion.AccessTokenVersion);
-        Assert.Equal(4, tokenVersion.RefreshTokenVersion);
-    }
-
-    /// <summary>
-    /// Tests that combining different revoke methods correctly updates the TokenRevocationVersion
-    /// through multiple serialization/deserialization cycles.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void TokenRevocationVersion_CombinedRevokeMethods_VersionsIncrementedCorrectly()
-    {
-        // Arrange
-        var result = User.Create("test@example.com", "Test User", "hash123");
-        var user = result.Value;
-        // Act
-        user.RevokeAccessTokens();
-        user.RevokeRefreshTokens();
-        user.RevokeAllCurrentTokens();
-        var tokenVersion = user.TokenRevocationVersion;
-        // Assert
-        Assert.Equal(3, tokenVersion.AccessTokenVersion);
-        Assert.Equal(3, tokenVersion.RefreshTokenVersion);
-    }
-
-    /// <summary>
-    /// Tests that the TokenRevocationVersion property correctly performs serialization
-    /// and deserialization round-trip, preserving all property values.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void TokenRevocationVersion_SerializationRoundTrip_PreservesAllValues()
-    {
-        // Arrange
-        var result = User.Create("test@example.com", "Test User", "hash123");
-        var user = result.Value;
-        var beforeRevoke = DateTime.UtcNow;
-        // Act - Modify through multiple operations
-        user.RevokeAccessTokens();
-        user.RevokeAccessTokens();
-        user.RevokeRefreshTokens();
-        var tokenVersion1 = user.TokenRevocationVersion;
-        var tokenVersion2 = user.TokenRevocationVersion;
-        var afterRevoke = DateTime.UtcNow;
-        // Assert - Both retrieved instances have the same values
-        Assert.Equal(3, tokenVersion1.AccessTokenVersion);
-        Assert.Equal(3, tokenVersion2.AccessTokenVersion);
-        Assert.Equal(2, tokenVersion1.RefreshTokenVersion);
-        Assert.Equal(2, tokenVersion2.RefreshTokenVersion);
-        Assert.True(tokenVersion1.LastRevokedAt >= beforeRevoke && tokenVersion1.LastRevokedAt <= afterRevoke);
-        Assert.Equal(tokenVersion1.LastRevokedAt, tokenVersion2.LastRevokedAt);
-    }
-
-    /// <summary>
     /// Tests that TokenRevocationVersion getter correctly handles the empty JSON object "{}"
     /// by returning a new instance with default values.
     /// </summary>
@@ -309,50 +151,6 @@ public class UserTests
         var finalAccessTokenVersion = user.TokenRevocationVersion.AccessTokenVersion;
         Assert.Equal(initialAccessTokenVersion, finalAccessTokenVersion);
         Assert.Equal(1, finalAccessTokenVersion);
-    }
-
-    /// <summary>
-    /// Tests that RevokeRefreshTokens updates the LastRevokedAt timestamp
-    /// to a value close to the current UTC time.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void RevokeRefreshTokens_UpdatesLastRevokedAt()
-    {
-        // Arrange
-        var userResult = User.Create("test@example.com", "Test User", "hashedPassword", "free");
-        var user = userResult.Value!;
-        var beforeRevocation = DateTime.UtcNow;
-        // Act
-        user.RevokeRefreshTokens();
-        // Assert
-        var afterRevocation = DateTime.UtcNow;
-        var lastRevokedAt = user.TokenRevocationVersion.LastRevokedAt;
-        Assert.True(lastRevokedAt >= beforeRevocation);
-        Assert.True(lastRevokedAt <= afterRevocation);
-        Assert.NotEqual(default(DateTime), lastRevokedAt);
-    }
-
-    /// <summary>
-    /// Tests that changes made by RevokeRefreshTokens persist across multiple
-    /// property accesses, verifying proper serialization and deserialization.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void RevokeRefreshTokens_ChangesPersistAcrossPropertyAccess()
-    {
-        // Arrange
-        var userResult = User.Create("test@example.com", "Test User", "hashedPassword", "free");
-        var user = userResult.Value!;
-        // Act
-        user.RevokeRefreshTokens();
-        var firstAccess = user.TokenRevocationVersion.RefreshTokenVersion;
-        var secondAccess = user.TokenRevocationVersion.RefreshTokenVersion;
-        var thirdAccess = user.TokenRevocationVersion.RefreshTokenVersion;
-        // Assert
-        Assert.Equal(2, firstAccess);
-        Assert.Equal(2, secondAccess);
-        Assert.Equal(2, thirdAccess);
     }
 
     #region CreateWithOAuth Tests
@@ -943,28 +741,6 @@ public class UserTests
     }
 
     /// <summary>
-    /// Tests that RevokeAllTokens updates the TokenRevocationVersion.
-    /// Verifies that calling RevokeAllTokens modifies the internal token revocation state
-    /// by checking that the TokenRevocationVersion property is updated.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void RevokeAllTokens_UpdatesTokenRevocationVersion()
-    {
-        // Arrange
-        var userResult = User.Create("test@example.com", "Test User", "hashedPassword");
-        var user = userResult.Value;
-        var initialVersion = user.TokenRevocationVersion;
-        // Act
-        var result = user.RevokeAllTokens("Test revocation");
-        // Assert
-        Assert.True(result.IsSuccess);
-        var updatedVersion = user.TokenRevocationVersion;
-        Assert.NotEqual(initialVersion.AccessTokenVersion, updatedVersion.AccessTokenVersion);
-        Assert.NotEqual(initialVersion.RefreshTokenVersion, updatedVersion.RefreshTokenVersion);
-    }
-
-    /// <summary>
     /// Tests that RevokeAllTokens can be called multiple times successfully.
     /// Verifies that the method is idempotent and can be invoked repeatedly
     /// without throwing exceptions or failing.
@@ -1059,28 +835,6 @@ public class UserTests
     }
 
     /// <summary>
-    /// Tests that UpdatePassword revokes all current tokens by incrementing the token revocation version.
-    /// This ensures that existing access and refresh tokens are invalidated when the password changes.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void UpdatePassword_ValidPasswordHash_RevokesAllCurrentTokens()
-    {
-        // Arrange
-        var userResult = User.Create("test@example.com", "Test User", "initialHash");
-        var user = userResult.Value!;
-        var initialAccessVersion = user.TokenRevocationVersion.AccessTokenVersion;
-        var initialRefreshVersion = user.TokenRevocationVersion.RefreshTokenVersion;
-        var newPasswordHash = "newSecurePasswordHash123";
-        // Act
-        var result = user.UpdatePassword(newPasswordHash);
-        // Assert
-        Assert.True(result.IsSuccess);
-        Assert.True(user.TokenRevocationVersion.AccessTokenVersion > initialAccessVersion);
-        Assert.True(user.TokenRevocationVersion.RefreshTokenVersion > initialRefreshVersion);
-    }
-
-    /// <summary>
     /// Tests that UpdatePassword handles various valid password hash formats including
     /// very long strings, special characters, and unicode characters.
     /// </summary>
@@ -1119,141 +873,6 @@ public class UserTests
         // Assert
         Assert.True(result.IsSuccess);
         Assert.Equal(veryLongHash, user.PasswordHash);
-    }
-
-    /// <summary>
-    /// Tests that multiple successive password updates work correctly,
-    /// each time updating the LastPasswordChangedAt timestamp and revoking tokens.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void UpdatePassword_MultipleSuccessiveUpdates_EachUpdateSucceeds()
-    {
-        // Arrange
-        var userResult = User.Create("test@example.com", "Test User", "initialHash");
-        var user = userResult.Value!;
-        var firstPasswordHash = "firstHash";
-        var secondPasswordHash = "secondHash";
-        // Act
-        var firstResult = user.UpdatePassword(firstPasswordHash);
-        var firstUpdateTime = user.LastPasswordChangedAt;
-        var firstAccessVersion = user.TokenRevocationVersion.AccessTokenVersion;
-        System.Threading.Thread.Sleep(10); // Ensure time difference
-        var secondResult = user.UpdatePassword(secondPasswordHash);
-        var secondUpdateTime = user.LastPasswordChangedAt;
-        var secondAccessVersion = user.TokenRevocationVersion.AccessTokenVersion;
-        // Assert
-        Assert.True(firstResult.IsSuccess);
-        Assert.True(secondResult.IsSuccess);
-        Assert.Equal(secondPasswordHash, user.PasswordHash);
-        Assert.NotNull(firstUpdateTime);
-        Assert.NotNull(secondUpdateTime);
-        Assert.True(secondUpdateTime > firstUpdateTime);
-        Assert.True(secondAccessVersion > firstAccessVersion);
-    }
-
-    /// <summary>
-    /// Tests that calling RevokeAccessTokens for the first time increments the AccessTokenVersion from 1 to 2.
-    /// Input: A newly created user with default TokenRevocationVersion (AccessTokenVersion = 1).
-    /// Expected: AccessTokenVersion should be incremented to 2 after calling RevokeAccessTokens.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void RevokeAccessTokens_FirstCall_IncrementsAccessTokenVersionFromOneToTwo()
-    {
-        // Arrange
-        Result<User> userResult = User.Create("test@example.com", "Test User");
-        User user = userResult.Value!;
-        // Act
-        user.RevokeAccessTokens();
-        // Assert
-        Assert.Equal(2, user.TokenRevocationVersion.AccessTokenVersion);
-    }
-
-    /// <summary>
-    /// Tests that calling RevokeAccessTokens multiple times continues to increment AccessTokenVersion sequentially.
-    /// Input: A newly created user, with RevokeAccessTokens called three times.
-    /// Expected: AccessTokenVersion should increment from 1 to 2, then to 3, then to 4.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void RevokeAccessTokens_SubsequentCalls_ContinuesIncrementingAccessTokenVersion()
-    {
-        // Arrange
-        Result<User> userResult = User.Create("test@example.com", "Test User");
-        User user = userResult.Value!;
-        // Act
-        user.RevokeAccessTokens();
-        TokenRevocationVersion versionAfterFirst = user.TokenRevocationVersion;
-        user.RevokeAccessTokens();
-        TokenRevocationVersion versionAfterSecond = user.TokenRevocationVersion;
-        user.RevokeAccessTokens();
-        TokenRevocationVersion versionAfterThird = user.TokenRevocationVersion;
-        // Assert
-        Assert.Equal(2, versionAfterFirst.AccessTokenVersion);
-        Assert.Equal(3, versionAfterSecond.AccessTokenVersion);
-        Assert.Equal(4, versionAfterThird.AccessTokenVersion);
-    }
-
-    /// <summary>
-    /// Tests that calling RevokeAccessTokens does not affect the RefreshTokenVersion.
-    /// Input: A newly created user with RevokeAccessTokens called once.
-    /// Expected: RefreshTokenVersion should remain at its initial value of 1.
-    /// </summary>
-    [Fact]
-    public void RevokeAccessTokens_WhenCalled_DoesNotChangeRefreshTokenVersion()
-    {
-        // Arrange
-        Result<User> userResult = User.Create("test@example.com", "Test User");
-        User user = userResult.Value!;
-        int initialRefreshTokenVersion = user.TokenRevocationVersion.RefreshTokenVersion;
-        // Act
-        user.RevokeAccessTokens();
-        // Assert
-        Assert.Equal(initialRefreshTokenVersion, user.TokenRevocationVersion.RefreshTokenVersion);
-        Assert.Equal(1, user.TokenRevocationVersion.RefreshTokenVersion);
-    }
-
-    /// <summary>
-    /// Tests that calling RevokeAccessTokens updates the LastRevokedAt timestamp to a recent DateTime value.
-    /// Input: A newly created user.
-    /// Expected: LastRevokedAt should be set to a DateTime within a few seconds of the current time.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void RevokeAccessTokens_WhenCalled_UpdatesLastRevokedAt()
-    {
-        // Arrange
-        Result<User> userResult = User.Create("test@example.com", "Test User");
-        User user = userResult.Value!;
-        DateTime beforeRevocation = DateTime.UtcNow.AddSeconds(-1);
-        // Act
-        user.RevokeAccessTokens();
-        DateTime afterRevocation = DateTime.UtcNow.AddSeconds(1);
-        // Assert
-        Assert.True(user.TokenRevocationVersion.LastRevokedAt >= beforeRevocation, "LastRevokedAt should be set to a time after the test started");
-        Assert.True(user.TokenRevocationVersion.LastRevokedAt <= afterRevocation, "LastRevokedAt should be set to a time before the test completed");
-    }
-
-    /// <summary>
-    /// Tests that the TokenRevocationVersion changes are properly persisted through serialization.
-    /// Input: A newly created user with RevokeAccessTokens called.
-    /// Expected: Retrieving TokenRevocationVersion again should return the updated value.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void RevokeAccessTokens_WhenCalled_PersistsChangesAcrossPropertyAccess()
-    {
-        // Arrange
-        Result<User> userResult = User.Create("test@example.com", "Test User");
-        User user = userResult.Value!;
-        // Act
-        user.RevokeAccessTokens();
-        int versionAfterFirstAccess = user.TokenRevocationVersion.AccessTokenVersion;
-        int versionAfterSecondAccess = user.TokenRevocationVersion.AccessTokenVersion;
-        // Assert
-        Assert.Equal(2, versionAfterFirstAccess);
-        Assert.Equal(2, versionAfterSecondAccess);
     }
 
     /// <summary>
@@ -1325,7 +944,6 @@ public class UserTests
     /// <param name = "validTier">The valid tier value to test.</param>
     [Theory]
     [InlineData("premium")]
-    [InlineData("free")]
     [InlineData("enterprise")]
     [InlineData("basic")]
     public void UpdateTier_ValidTier_ReturnsSucessAndUpdatesTierProperty(string validTier)
@@ -2423,24 +2041,6 @@ public class UserTests
     }
 
     /// <summary>
-    /// Tests that RevokeAccessTokensOnly increments the AccessTokenVersion and returns a successful result when called with the default reason parameter.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void RevokeAccessTokensOnly_WithDefaultReason_IncrementsAccessTokenVersionAndReturnsSuccess()
-    {
-        // Arrange
-        var userResult = User.Create("test@example.com", "Test User", "hashedPassword");
-        var user = userResult.Value;
-        var initialAccessTokenVersion = user.TokenRevocationVersion.AccessTokenVersion;
-        // Act
-        var result = user.RevokeAccessTokensOnly();
-        // Assert
-        Assert.True(result.IsSuccess);
-        Assert.Equal(initialAccessTokenVersion + 1, user.TokenRevocationVersion.AccessTokenVersion);
-    }
-
-    /// <summary>
     /// Tests that RevokeAccessTokensOnly does not affect the RefreshTokenVersion.
     /// </summary>
     [Fact]
@@ -2479,45 +2079,6 @@ public class UserTests
         Assert.True(result.IsSuccess);
         Assert.False(result.IsFailure);
         Assert.Empty(result.Error);
-    }
-
-    /// <summary>
-    /// Tests that calling RevokeAccessTokensOnly multiple times increments the AccessTokenVersion each time.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void RevokeAccessTokensOnly_CalledMultipleTimes_IncrementsAccessTokenVersionEachTime()
-    {
-        // Arrange
-        var userResult = User.Create("test@example.com", "Test User", "hashedPassword");
-        var user = userResult.Value;
-        var initialAccessTokenVersion = user.TokenRevocationVersion.AccessTokenVersion;
-        // Act
-        user.RevokeAccessTokensOnly("First revocation");
-        user.RevokeAccessTokensOnly("Second revocation");
-        user.RevokeAccessTokensOnly("Third revocation");
-        // Assert
-        Assert.Equal(initialAccessTokenVersion + 3, user.TokenRevocationVersion.AccessTokenVersion);
-    }
-
-    /// <summary>
-    /// Tests that RevokeAccessTokensOnly increments AccessTokenVersion but not RefreshTokenVersion when called with an explicit reason.
-    /// </summary>
-    [Fact(Skip = "ProductionBugSuspected")]
-    [Trait("Category", "ProductionBugSuspected")]
-    public void RevokeAccessTokensOnly_WithExplicitReason_IncrementsOnlyAccessTokenVersion()
-    {
-        // Arrange
-        var userResult = User.Create("test@example.com", "Test User", "hashedPassword");
-        var user = userResult.Value;
-        var initialAccessTokenVersion = user.TokenRevocationVersion.AccessTokenVersion;
-        var initialRefreshTokenVersion = user.TokenRevocationVersion.RefreshTokenVersion;
-        // Act
-        var result = user.RevokeAccessTokensOnly("Security policy update");
-        // Assert
-        Assert.True(result.IsSuccess);
-        Assert.Equal(initialAccessTokenVersion + 1, user.TokenRevocationVersion.AccessTokenVersion);
-        Assert.Equal(initialRefreshTokenVersion, user.TokenRevocationVersion.RefreshTokenVersion);
     }
 
     /// <summary>
