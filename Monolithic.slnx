@@ -18,8 +18,20 @@
   <Folder Name="/Tests/" />
   <Folder Name="/Tests/ArchitectureTests/">
     <Project Path="src/Tests/ArchitectureTests/DomainLayerTests/DomainLayerTests.csproj" />
-    <Project Path="src/Tests/ArchitectureTests/FeaturesLayerTests/FeaturesLayerTests.csproj" Id="3b9925d3-6c06-4c9e-b835-d26c82c1c4eb" />
-    <Project Path="src/Tests/ArchitectureTests/InfrastructureLayerTests/InfrastructureLayerTests.csproj" Id="4e67aeca-b49d-4cc5-bda7-72783c3ec656" />
+    <Project Path="src/Tests/ArchitectureTests/FeaturesLayerTests/FeaturesLayerTests.csproj" />
+    <Project Path="src/Tests/ArchitectureTests/InfrastructureLayerTests/InfrastructureLayerTests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/ModulesTests/">
+    <Project Path="src/Tests/ModulesTests/AppHost.UnitTests/AppHost.UnitTests.csproj" />
+    <Project Path="src/Tests/ModulesTests/Shared/Shared.Application.UnitTests/Shared.Application.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/ModulesTests/Bookings/">
+    <Project Path="src/Tests/ModulesTests/Bookings/Bookings.Domain.UnitTests/Bookings.Domain.UnitTests.csproj" />
+    <Project Path="src/Tests/ModulesTests/Bookings/Bookings.Infrastructure.UnitTests/Bookings.Infrastructure.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/Tests/ModulesTests/Users/">
+    <Project Path="src/Tests/ModulesTests/Users/Users.Domain.UnitTests/Users.Domain.UnitTests.csproj" />
+    <Project Path="src/Tests/ModulesTests/Users/Users.Features.UnitTests/Users.Features.UnitTests.csproj" />
   </Folder>
   <Project Path="src/AppHost/AppHost.csproj" />
 </Solution>

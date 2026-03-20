@@ -1,0 +1,6 @@
+
+- You will remove all the //Comment and XML comments Remove excessive unnecessary Logging. 
+- Do not generate any md/txt/any summary
+- Keep the code clean and concise, without any redundant or verbose statements.
+- You will not include any code that is not directly relevant to the functionality being implemented.
+- While you write code, make sure the file is placed exactly where it should be according to the project structure and DDD, Clean architecture, Clean coding practices.
