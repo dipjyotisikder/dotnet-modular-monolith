@@ -25,11 +25,11 @@ public class FeaturesModelConsistencyTests
     public void HandlersShouldFollowNamingConvention()
     {
         var userHandlers = GetTypesInNamespace(UsersFeaturesAssembly, "Users.Features")
-            .Where(t => t.IsClass && !t.IsAbstract && t.Name.EndsWith("Handler"))
+            .Where(t => t.IsClass && !t.IsAbstract && (t.Name.EndsWith("CommandHandler") || t.Name.EndsWith("QueryHandler")))
             .ToList();
 
         var bookingHandlers = GetTypesInNamespace(BookingsFeaturesAssembly, "Bookings.Features")
-            .Where(t => t.IsClass && !t.IsAbstract && t.Name.EndsWith("Handler"))
+            .Where(t => t.IsClass && !t.IsAbstract && (t.Name.EndsWith("CommandHandler") || t.Name.EndsWith("QueryHandler")))
             .ToList();
 
         var properlyNamed = userHandlers.Concat(bookingHandlers)

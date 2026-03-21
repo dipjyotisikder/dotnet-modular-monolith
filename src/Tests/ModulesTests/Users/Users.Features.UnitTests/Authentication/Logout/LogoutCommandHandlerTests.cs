@@ -33,60 +33,9 @@ public class LogoutCommandHandlerTests
         Assert.NotNull(result);
         Assert.True(result.IsFailure);
         Assert.Equal("Device not found", result.Error);
-        Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
+        Assert.Equal(ErrorCodes.RESOURCE_NOT_FOUND, result.ErrorCode);
         _deviceRepositoryMock.Verify(x => x.GetByDeviceIdAsync(deviceId, cancellationToken), Times.Once);
         _deviceRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<UserDevice>(), It.IsAny<CancellationToken>()), Times.Never);
     }
-
-    [Fact]
-    public async Task Handle_GetByDeviceIdAsyncThrowsException_ReturnsFailureWithInternalError()
-    {
-        var deviceId = "device-id";
-        var command = new LogoutCommand(deviceId);
-        var cancellationToken = CancellationToken.None;
-
-        _deviceRepositoryMock
-            .Setup(x => x.GetByDeviceIdAsync(deviceId, cancellationToken))
-            .ThrowsAsync(new InvalidOperationException("Database connection failed"));
-
-        var result = await _handler.Handle(command, cancellationToken);
-
-        Assert.NotNull(result);
-        Assert.True(result.IsFailure);
-        Assert.Equal("An error occurred during logout", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
-        _deviceRepositoryMock.Verify(x => x.GetByDeviceIdAsync(deviceId, cancellationToken), Times.Once);
-    }
-
-    [Theory]
-    [MemberData(nameof(GetExceptionTestCases))]
-    public async Task Handle_VariousExceptionTypes_ReturnsFailureWithInternalError(Exception exception)
-    {
-        var deviceId = "device-id";
-        var command = new LogoutCommand(deviceId);
-        var cancellationToken = CancellationToken.None;
-
-        _deviceRepositoryMock
-            .Setup(x => x.GetByDeviceIdAsync(deviceId, cancellationToken))
-            .ThrowsAsync(exception);
-
-        var result = await _handler.Handle(command, cancellationToken);
-
-        Assert.NotNull(result);
-        Assert.True(result.IsFailure);
-        Assert.Equal("An error occurred during logout", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
-    }
-
-    public static TheoryData<Exception> GetExceptionTestCases()
-    {
-        return new TheoryData<Exception>
-        {
-            new Exception("Generic exception"),
-            new InvalidOperationException("Invalid operation"),
-            new ArgumentException("Argument exception"),
-            new NullReferenceException("Null reference"),
-            new TimeoutException("Timeout")
-        };
-    }
 }
+

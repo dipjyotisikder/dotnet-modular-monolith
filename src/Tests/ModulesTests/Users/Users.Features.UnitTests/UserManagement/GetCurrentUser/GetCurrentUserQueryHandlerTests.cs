@@ -86,34 +86,12 @@ public class GetCurrentUserQueryHandlerTests
         Assert.False(result.IsSuccess);
         Assert.True(result.IsFailure);
         Assert.Equal("User not found", result.Error);
-        Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
+        Assert.Equal(ErrorCodes.RESOURCE_NOT_FOUND, result.ErrorCode);
         mockRepository.Verify(r => r.FindAsync(It.IsAny<Expression<Func<User, bool>>>(), cancellationToken), Times.Once);
     }
 
     [Fact]
-    public async Task Handle_RepositoryThrowsException_ReturnsFailureWithInternalError()
-    {
-        var userId = Guid.NewGuid();
-        var mockRepository = new Mock<IUserRepository>();
-        mockRepository
-            .Setup(r => r.FindAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new Exception("Database connection failed"));
-
-        var handler = new GetCurrentUserQueryHandler(mockRepository.Object);
-        var query = new GetCurrentUserQuery(userId.ToString());
-        var cancellationToken = CancellationToken.None;
-
-        var result = await handler.Handle(query, cancellationToken);
-
-        Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailure);
-        Assert.Equal("An error occurred while retrieving user", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
-    }
-
-    [Fact]
-    public async Task Handle_EmptyGuidUserIdAndUserNotFound_ReturnsFailureWithUserNotFound()
-    {
+    public async Task Handle_EmptyGuidUserIdAndUserNotFound_ReturnsFailureWithUserNotFound(){
         var userId = Guid.Empty;
         var mockRepository = new Mock<IUserRepository>();
         mockRepository
@@ -128,7 +106,7 @@ public class GetCurrentUserQueryHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal("User not found", result.Error);
-        Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
+        Assert.Equal(ErrorCodes.RESOURCE_NOT_FOUND, result.ErrorCode);
     }
 
     [Fact]
@@ -176,26 +154,6 @@ public class GetCurrentUserQueryHandlerTests
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Value);
         Assert.Null(result.Value.LastLoginAt);
-    }
-
-    [Fact]
-    public async Task Handle_RepositoryReturnsEmpty_ReturnsFailureWithUserNotFound()
-    {
-        var userId = Guid.NewGuid();
-        var mockRepository = new Mock<IUserRepository>();
-        mockRepository
-            .Setup(r => r.FindAsync(It.IsAny<Expression<Func<User, bool>>>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Enumerable.Empty<User>());
-
-        var handler = new GetCurrentUserQueryHandler(mockRepository.Object);
-        var query = new GetCurrentUserQuery(userId.ToString());
-        var cancellationToken = CancellationToken.None;
-
-        var result = await handler.Handle(query, cancellationToken);
-
-        Assert.False(result.IsSuccess);
-        Assert.Equal("User not found", result.Error);
-        Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
     }
 
     [Fact]

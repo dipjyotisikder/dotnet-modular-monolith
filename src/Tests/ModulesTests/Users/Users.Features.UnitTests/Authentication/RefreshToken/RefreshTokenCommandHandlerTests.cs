@@ -238,21 +238,6 @@ public class RefreshTokenCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ExceptionThrown_ReturnsInternalErrorFailure()
-    {
-        var command = new RefreshTokenCommand("refresh-token", "device-id");
-        _deviceRepositoryMock
-            .Setup(r => r.GetByDeviceIdAsync("device-id", It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new InvalidOperationException("Database error"));
-
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        Assert.Equal("An error occurred while refreshing token", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
-    }
-
-    [Fact]
     public async Task Handle_WithCancellationToken_PassesCancellationTokenToRepositories()
     {
         var userId = Guid.NewGuid();

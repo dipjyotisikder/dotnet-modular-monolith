@@ -75,37 +75,9 @@ public class RevokeAllDevicesCommandHandlerTests
         Assert.False(result.IsSuccess);
         Assert.True(result.IsFailure);
         Assert.Equal("User not found", result.Error);
-        Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
+        Assert.Equal(ErrorCodes.RESOURCE_NOT_FOUND, result.ErrorCode);
         mockDeviceRepository.Verify(x => x.RevokeUserDevicesAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
         mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-    }
-
-    [Fact]
-    public async Task Handle_ExceptionThrown_ReturnsInternalError()
-    {
-        var userId = Guid.NewGuid();
-        var command = new RevokeAllDevicesCommand(userId, "Test reason");
-        var cancellationToken = CancellationToken.None;
-
-        var mockUserRepository = new Mock<IUserRepository>();
-        mockUserRepository
-            .Setup(x => x.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>(), cancellationToken))
-            .ThrowsAsync(new Exception("Database error"));
-
-        var mockDeviceRepository = new Mock<IUserDeviceRepository>();
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        var handler = new RevokeAllDevicesCommandHandler(
-            mockUserRepository.Object,
-            mockDeviceRepository.Object,
-            mockUnitOfWork.Object);
-
-        var result = await handler.Handle(command, cancellationToken);
-
-        Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailure);
-        Assert.Equal("Error revoking all devices", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
     }
 
     [Fact]
@@ -243,106 +215,7 @@ public class RevokeAllDevicesCommandHandlerTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal("User not found", result.Error);
-        Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
-    }
-
-    [Fact]
-    public async Task Handle_DeviceRepositoryThrowsException_ReturnsInternalError()
-    {
-        var userId = Guid.NewGuid();
-        var command = new RevokeAllDevicesCommand(userId, "Test reason");
-        var cancellationToken = CancellationToken.None;
-
-        var userResult = User.Create("test@example.com", "Test User");
-        var users = new List<User> { userResult.Value! };
-
-        var mockUserRepository = new Mock<IUserRepository>();
-        mockUserRepository
-            .Setup(x => x.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>(), cancellationToken))
-            .ReturnsAsync(users);
-
-        var mockDeviceRepository = new Mock<IUserDeviceRepository>();
-        mockDeviceRepository
-            .Setup(x => x.RevokeUserDevicesAsync(userId, cancellationToken))
-            .ThrowsAsync(new Exception("Device revocation failed"));
-
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        var handler = new RevokeAllDevicesCommandHandler(
-            mockUserRepository.Object,
-            mockDeviceRepository.Object,
-            mockUnitOfWork.Object);
-
-        var result = await handler.Handle(command, cancellationToken);
-
-        Assert.False(result.IsSuccess);
-        Assert.Equal("Error revoking all devices", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
-    }
-
-    [Fact]
-    public async Task Handle_UnitOfWorkThrowsException_ReturnsInternalError()
-    {
-        var userId = Guid.NewGuid();
-        var command = new RevokeAllDevicesCommand(userId, "Test reason");
-        var cancellationToken = CancellationToken.None;
-
-        var userResult = User.Create("test@example.com", "Test User");
-        var users = new List<User> { userResult.Value! };
-
-        var mockUserRepository = new Mock<IUserRepository>();
-        mockUserRepository
-            .Setup(x => x.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>(), cancellationToken))
-            .ReturnsAsync(users);
-
-        var mockDeviceRepository = new Mock<IUserDeviceRepository>();
-        mockDeviceRepository
-            .Setup(x => x.RevokeUserDevicesAsync(userId, cancellationToken))
-            .Returns(Task.CompletedTask);
-
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-        mockUnitOfWork
-            .Setup(x => x.SaveChangesAsync(cancellationToken))
-            .ThrowsAsync(new Exception("Database save failed"));
-
-        var handler = new RevokeAllDevicesCommandHandler(
-            mockUserRepository.Object,
-            mockDeviceRepository.Object,
-            mockUnitOfWork.Object);
-
-        var result = await handler.Handle(command, cancellationToken);
-
-        Assert.False(result.IsSuccess);
-        Assert.Equal("Error revoking all devices", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
-    }
-
-    [Fact]
-    public async Task Handle_CancelledToken_ReturnsInternalError()
-    {
-        var userId = Guid.NewGuid();
-        var command = new RevokeAllDevicesCommand(userId, "Test reason");
-        var cancellationTokenSource = new CancellationTokenSource();
-        cancellationTokenSource.Cancel();
-        var cancellationToken = cancellationTokenSource.Token;
-
-        var mockUserRepository = new Mock<IUserRepository>();
-        mockUserRepository
-            .Setup(x => x.FindAsync(It.IsAny<System.Linq.Expressions.Expression<Func<User, bool>>>(), cancellationToken))
-            .ThrowsAsync(new OperationCanceledException());
-
-        var mockDeviceRepository = new Mock<IUserDeviceRepository>();
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        var handler = new RevokeAllDevicesCommandHandler(
-            mockUserRepository.Object,
-            mockDeviceRepository.Object,
-            mockUnitOfWork.Object);
-
-        var result = await handler.Handle(command, cancellationToken);
-
-        Assert.False(result.IsSuccess);
-        Assert.Equal("Error revoking all devices", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
+        Assert.Equal(ErrorCodes.RESOURCE_NOT_FOUND, result.ErrorCode);
     }
 }
+

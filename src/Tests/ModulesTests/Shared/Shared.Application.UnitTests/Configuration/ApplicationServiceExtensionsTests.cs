@@ -23,7 +23,7 @@ public class ApplicationServiceExtensionsTests
         var result = services.AddApplicationServices();
 
         Assert.Same(services, result);
-        Assert.Equal(2, services.Count);
+        Assert.Equal(3, services.Count);
 
         var loggingDescriptor = services[0];
         Assert.Equal(typeof(IPipelineBehavior<,>), loggingDescriptor.ServiceType);
@@ -44,7 +44,7 @@ public class ApplicationServiceExtensionsTests
         services.AddApplicationServices();
         services.AddApplicationServices();
 
-        Assert.Equal(4, services.Count);
+        Assert.Equal(6, services.Count);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public class ApplicationServiceExtensionsTests
         var result = services.AddApplicationServices();
 
         Assert.Same(services, result);
-        Assert.Equal(3, services.Count);
+        Assert.Equal(4, services.Count);
         Assert.Equal(typeof(string), services[0].ServiceType);
         Assert.Equal(typeof(IPipelineBehavior<,>), services[1].ServiceType);
         Assert.Equal(typeof(IPipelineBehavior<,>), services[2].ServiceType);

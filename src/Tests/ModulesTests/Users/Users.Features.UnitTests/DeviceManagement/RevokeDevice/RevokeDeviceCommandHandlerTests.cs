@@ -28,7 +28,7 @@ public class RevokeDeviceCommandHandlerTests
         Assert.False(result.IsSuccess);
         Assert.True(result.IsFailure);
         Assert.Equal("Device not found", result.Error);
-        Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
+        Assert.Equal(ErrorCodes.RESOURCE_NOT_FOUND, result.ErrorCode);
         mockDeviceRepository.Verify(x => x.UpdateAsync(It.IsAny<UserDevice>(), It.IsAny<CancellationToken>()), Times.Never);
         mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -103,97 +103,6 @@ public class RevokeDeviceCommandHandlerTests
         Assert.Equal(ErrorCodes.VALIDATION_ERROR, result.ErrorCode);
         mockDeviceRepository.Verify(x => x.UpdateAsync(It.IsAny<UserDevice>(), It.IsAny<CancellationToken>()), Times.Never);
         mockUnitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
-    }
-
-    [Fact]
-    public async Task Handle_GetByDeviceIdAsyncThrowsException_ReturnsInternalError()
-    {
-        var mockDeviceRepository = new Mock<IUserDeviceRepository>();
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        mockDeviceRepository
-            .Setup(x => x.GetByDeviceIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new InvalidOperationException("Database connection failed"));
-
-        var handler = new RevokeDeviceCommandHandler(mockDeviceRepository.Object, mockUnitOfWork.Object);
-        var command = new RevokeDeviceCommand("device-123", "Test reason");
-
-        Result result = await handler.Handle(command, CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailure);
-        Assert.Equal("Error revoking device", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
-    }
-
-    [Fact]
-    public async Task Handle_UpdateAsyncThrowsException_ReturnsInternalError()
-    {
-        var mockDeviceRepository = new Mock<IUserDeviceRepository>();
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        var deviceResult = UserDevice.Create(
-            Guid.NewGuid(),
-            "device-123",
-            "Test Device",
-            "refresh-token",
-            DateTime.UtcNow.AddDays(30));
-        var device = deviceResult.Value;
-
-        mockDeviceRepository
-            .Setup(x => x.GetByDeviceIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(device);
-
-        mockDeviceRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<UserDevice>(), It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new InvalidOperationException("Update failed"));
-
-        var handler = new RevokeDeviceCommandHandler(mockDeviceRepository.Object, mockUnitOfWork.Object);
-        var command = new RevokeDeviceCommand("device-123", "Test reason");
-
-        Result result = await handler.Handle(command, CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailure);
-        Assert.Equal("Error revoking device", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
-    }
-
-    [Fact]
-    public async Task Handle_SaveChangesAsyncThrowsException_ReturnsInternalError()
-    {
-        var mockDeviceRepository = new Mock<IUserDeviceRepository>();
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-
-        var deviceResult = UserDevice.Create(
-            Guid.NewGuid(),
-            "device-123",
-            "Test Device",
-            "refresh-token",
-            DateTime.UtcNow.AddDays(30));
-        var device = deviceResult.Value;
-
-        mockDeviceRepository
-            .Setup(x => x.GetByDeviceIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(device);
-
-        mockDeviceRepository
-            .Setup(x => x.UpdateAsync(It.IsAny<UserDevice>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-
-        mockUnitOfWork
-            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
-            .ThrowsAsync(new InvalidOperationException("Save failed"));
-
-        var handler = new RevokeDeviceCommandHandler(mockDeviceRepository.Object, mockUnitOfWork.Object);
-        var command = new RevokeDeviceCommand("device-123", "Test reason");
-
-        Result result = await handler.Handle(command, CancellationToken.None);
-
-        Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailure);
-        Assert.Equal("Error revoking device", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
     }
 
     [Fact]

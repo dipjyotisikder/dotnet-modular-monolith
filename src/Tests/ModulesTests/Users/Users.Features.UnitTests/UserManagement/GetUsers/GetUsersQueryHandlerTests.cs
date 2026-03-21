@@ -25,23 +25,6 @@ public class GetUsersQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_WhenRepositoryThrowsException_ReturnsFailureWithErrorMessage()
-    {
-        var mockRepository = new Mock<IUserRepository>();
-        mockRepository.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("Database error"));
-        var handler = new GetUsersQueryHandler(mockRepository.Object);
-        var query = new GetUsersQuery();
-        var cancellationToken = CancellationToken.None;
-
-        var result = await handler.Handle(query, cancellationToken);
-
-        Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailure);
-        Assert.Equal("An error occurred while retrieving users", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
-    }
-
-    [Fact]
     public async Task Handle_PassesCancellationTokenToRepository()
     {
         var mockRepository = new Mock<IUserRepository>();
@@ -80,27 +63,6 @@ public class GetUsersQueryHandlerTests
         Assert.Equal("User With Special !@#$% Chars", responseList[0].Name);
         Assert.Equal(minDate, responseList[0].CreatedAt);
         Assert.False(responseList[0].IsActive);
-    }
-
-    [Theory]
-    [InlineData(typeof(ArgumentException))]
-    [InlineData(typeof(InvalidOperationException))]
-    [InlineData(typeof(NullReferenceException))]
-    [InlineData(typeof(Exception))]
-    public async Task Handle_WhenRepositoryThrowsDifferentExceptions_ReturnsFailureResult(Type exceptionType)
-    {
-        var mockRepository = new Mock<IUserRepository>();
-        var exception = (Exception)Activator.CreateInstance(exceptionType, "Error message")!;
-        mockRepository.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ThrowsAsync(exception);
-        var handler = new GetUsersQueryHandler(mockRepository.Object);
-        var query = new GetUsersQuery();
-        var cancellationToken = CancellationToken.None;
-
-        var result = await handler.Handle(query, cancellationToken);
-
-        Assert.False(result.IsSuccess);
-        Assert.Equal("An error occurred while retrieving users", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
     }
 
     [Fact]

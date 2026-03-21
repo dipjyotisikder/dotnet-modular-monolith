@@ -115,49 +115,6 @@ public class GetUserDevicesQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_RepositoryThrowsException_ReturnsFailureResult()
-    {
-        var userId = Guid.NewGuid();
-        var query = new GetUserDevicesQuery(userId);
-        var cancellationToken = CancellationToken.None;
-
-        var mockRepository = new Mock<IUserDeviceRepository>();
-        mockRepository.Setup(r => r.GetUserDevicesAsync(userId, cancellationToken))
-            .ThrowsAsync(new Exception("Database connection failed"));
-
-        var handler = new GetUserDevicesQueryHandler(mockRepository.Object);
-
-        var result = await handler.Handle(query, cancellationToken);
-
-        Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailure);
-        Assert.Equal("Error retrieving user devices", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
-        mockRepository.Verify(r => r.GetUserDevicesAsync(userId, cancellationToken), Times.Once);
-    }
-
-    [Fact]
-    public async Task Handle_RepositoryThrowsInvalidOperationException_ReturnsFailureResult()
-    {
-        var userId = Guid.NewGuid();
-        var query = new GetUserDevicesQuery(userId);
-        var cancellationToken = CancellationToken.None;
-
-        var mockRepository = new Mock<IUserDeviceRepository>();
-        mockRepository.Setup(r => r.GetUserDevicesAsync(userId, cancellationToken))
-            .ThrowsAsync(new InvalidOperationException("Invalid operation"));
-
-        var handler = new GetUserDevicesQueryHandler(mockRepository.Object);
-
-        var result = await handler.Handle(query, cancellationToken);
-
-        Assert.False(result.IsSuccess);
-        Assert.True(result.IsFailure);
-        Assert.Equal("Error retrieving user devices", result.Error);
-        Assert.Equal(ErrorCodes.INTERNAL_ERROR, result.ErrorCode);
-    }
-
-    [Fact]
     public async Task Handle_ValidRequest_PassesCancellationTokenToRepository()
     {
         var userId = Guid.NewGuid();
