@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Infrastructure.Authentication;
 using Shared.Infrastructure.Configuration.Options;
 using System.Text;
 
@@ -18,6 +19,8 @@ public static class AuthenticationConfigurationExtensions
 
         var oauthOptions = configuration.GetSection(OAuthOptions.SectionName).Get<OAuthOptions>()
             ?? throw new InvalidOperationException("OAUTH CONFIGURATION IS MISSING");
+
+        services.AddSingleton(oauthOptions);
 
         var authBuilder = services.AddAuthentication(options =>
         {
@@ -41,29 +44,16 @@ public static class AuthenticationConfigurationExtensions
 
         if (oauthOptions.Google.Enabled && !string.IsNullOrEmpty(oauthOptions.Google.ClientId))
         {
+            var claimsHandler = new OAuthClaimsTransformationHandler(oauthOptions);
             authBuilder.AddGoogle(options =>
             {
                 options.ClientId = oauthOptions.Google.ClientId;
                 options.ClientSecret = oauthOptions.Google.ClientSecret;
+                options.Events.OnCreatingTicket += claimsHandler.MapGoogleClaims;
             });
         }
 
-        if (oauthOptions.Microsoft.Enabled && !string.IsNullOrEmpty(oauthOptions.Microsoft.ClientId))
-        {
-            authBuilder.AddMicrosoftAccount(options =>
-            {
-                options.ClientId = oauthOptions.Microsoft.ClientId;
-                options.ClientSecret = oauthOptions.Microsoft.ClientSecret;
-            });
-        }
-
-        _ = services.AddAuthorization(options =>
-        {
-            options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
-            options.AddPolicy("UserPolicy", policy => policy.RequireRole("User", "Admin"));
-            options.AddPolicy("ProTierPolicy", policy => policy.RequireClaim("tier", "pro", "enterprise"));
-            options.AddPolicy("EnterpriseTierPolicy", policy => policy.RequireClaim("tier", "enterprise"));
-        });
+        services.AddAuthorization();
 
         return services;
     }

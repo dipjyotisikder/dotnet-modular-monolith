@@ -1,5 +1,7 @@
 using MediatR;
+using Shared.Application.Behaviors;
 using Shared.Domain;
+using AuthorizationPermission = Shared.Domain.Authorization.Permission;
 
 namespace Bookings.Features.BookingManagement.CreateBooking;
 
@@ -14,4 +16,7 @@ public record CreateBookingCommand(
     Guid HotelId,
     Guid RoomId,
     DateTime CheckIn,
-    DateTime CheckOut) : IRequest<Result<Guid>>;
+    DateTime CheckOut) : IRequest<Result<Guid>>, IPermissionRequired
+{
+    public string Permission => AuthorizationPermission.BookingCreate;
+}

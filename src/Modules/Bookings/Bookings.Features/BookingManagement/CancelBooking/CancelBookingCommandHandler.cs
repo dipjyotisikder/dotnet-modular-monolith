@@ -12,10 +12,7 @@ public class CancelBookingCommandHandler(IBookingRepository bookingRepository, I
     {
         var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
         if (booking is null)
-            return Result.Failure("Booking not found", ErrorCodes.RESOURCE_NOT_FOUND);
-
-        if (!booking.BelongsTo(request.RequestingUserId))
-            return Result.Failure("You are not authorized to cancel this booking", ErrorCodes.FORBIDDEN);
+            return Result.NotFound("Booking not found");
 
         var cancelResult = booking.Cancel(request.Reason);
         if (cancelResult.IsFailure)

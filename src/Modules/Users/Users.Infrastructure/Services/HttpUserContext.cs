@@ -39,4 +39,20 @@ public class HttpUserContext : IUserContext
     }
 
     public bool IsAuthenticated => _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+
+    public string? Tier => _httpContextAccessor.HttpContext?.User
+        .FindFirst("tier")?.Value ?? "standard";
+
+    public IReadOnlyList<string> Permissions
+    {
+        get
+        {
+            var permissions = _httpContextAccessor.HttpContext?.User
+                .FindAll("permission")
+                .Select(c => c.Value)
+                .ToList() ?? [];
+
+            return permissions.AsReadOnly();
+        }
+    }
 }

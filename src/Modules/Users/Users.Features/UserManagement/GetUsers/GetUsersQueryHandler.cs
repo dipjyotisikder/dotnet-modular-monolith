@@ -10,22 +10,15 @@ public class GetUsersQueryHandler(
 {
     public async Task<Result<IEnumerable<GetUsersResponse>>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var allUsers = await userRepository.GetAllAsync(cancellationToken);
-            var users = allUsers.Select(u => new GetUsersResponse(
-                u.Id.ToString(),
-                u.Email,
-                u.Name,
-                u.Tier,
-                u.CreatedAt,
-                u.IsActive)).ToList();
+        var allUsers = await userRepository.GetAllAsync(cancellationToken);
+        var users = allUsers.Select(u => new GetUsersResponse(
+            u.Id.ToString(),
+            u.Email,
+            u.Name,
+            u.Tier,
+            u.CreatedAt,
+            u.IsActive)).ToList();
 
-            return Result.Success(users.AsEnumerable());
-        }
-        catch (Exception)
-        {
-            return Result.Failure<IEnumerable<GetUsersResponse>>("An error occurred while retrieving users", ErrorCodes.INTERNAL_ERROR);
-        }
+        return Result.Success(users.AsEnumerable());
     }
 }

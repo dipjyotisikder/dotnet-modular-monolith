@@ -9,6 +9,9 @@ public static class ErrorCodes
     public const string CONFLICT = "conflict";
     public const string UNAUTHORIZED = "unauthorized";
     public const string FORBIDDEN = "forbidden";
+    public const string PERMISSION_DENIED = "permission_denied";
+    public const string AUTHENTICATION_REQUIRED = "authentication_required";
+    public const string REQUIREMENT_FAILED = "requirement_failed";
     public const string EXPIRED = "expired";
     public const string INVALID_STATE = "invalid_state";
     public const string CONCURRENCY_CONFLICT = "concurrency_conflict";

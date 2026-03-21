@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Domain.Authorization;
 using Shared.Infrastructure.Configuration.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -38,6 +39,12 @@ public class JwtTokenService : IJwtTokenService
         foreach (var role in user.GetRoles())
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        var userPermissions = GetPermissionsForUserRoles(user.GetRoles());
+        foreach (var permission in userPermissions)
+        {
+            claims.Add(new Claim("permission", permission));
         }
 
         var token = new JwtSecurityToken(
@@ -83,5 +90,21 @@ public class JwtTokenService : IJwtTokenService
         {
             return null;
         }
+    }
+
+    private static IEnumerable<string> GetPermissionsForUserRoles(List<string> userRoles)
+    {
+        var permissions = new HashSet<string>();
+
+        foreach (var role in userRoles)
+        {
+            var rolePermissions = RolePermissions.GetPermissionsForRole(role);
+            foreach (var permission in rolePermissions)
+            {
+                permissions.Add(permission);
+            }
+        }
+
+        return permissions;
     }
 }

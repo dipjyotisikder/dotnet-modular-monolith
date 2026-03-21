@@ -10,22 +10,15 @@ public class LogoutCommandHandler(
 {
     public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var device = await deviceRepository.GetByDeviceIdAsync(request.DeviceId, cancellationToken);
-            if (device == null)
-                return Result.Failure("Device not found", ErrorCodes.VALIDATION_ERROR);
+        var device = await deviceRepository.GetByDeviceIdAsync(request.DeviceId, cancellationToken);
+        if (device == null)
+            return Result.NotFound("Device not found");
 
-            var revokeResult = device.Revoke("User initiated logout");
-            if (revokeResult.IsFailure)
-                return Result.Failure(revokeResult.Error, revokeResult.ErrorCode);
+        var revokeResult = device.Revoke("User initiated logout");
+        if (revokeResult.IsFailure)
+            return Result.Failure(revokeResult.Error, revokeResult.ErrorCode);
 
-            await deviceRepository.UpdateAsync(device, cancellationToken);
-            return Result.Success();
-        }
-        catch (Exception)
-        {
-            return Result.Failure("An error occurred during logout", ErrorCodes.INTERNAL_ERROR);
-        }
+        await deviceRepository.UpdateAsync(device, cancellationToken);
+        return Result.Success();
     }
 }

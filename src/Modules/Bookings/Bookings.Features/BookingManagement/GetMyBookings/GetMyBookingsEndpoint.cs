@@ -17,7 +17,8 @@ public class GetMyBookingsEndpoint : IEndpoint
             .WithName("GetMyBookings")
             .RequireAuthorization()
             .WithTags("Bookings")
-            .Produces(StatusCodes.Status200OK);
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status403Forbidden);
     }
 
     private static async Task<IResult> GetMyBookingsHandler(
@@ -25,10 +26,9 @@ public class GetMyBookingsEndpoint : IEndpoint
         ISender sender,
         CancellationToken cancellationToken)
     {
-        if (!userContext.IsAuthenticated)
-            return Results.Unauthorized();
-
-        var result = await sender.Send(new GetMyBookingsQuery(userContext.UserId), cancellationToken);
+        var result = await sender.Send(
+            new GetMyBookingsQuery(userContext.UserId),
+            cancellationToken);
 
         return ResultToHttpResponseMapper.MapToHttpResponse(result);
     }

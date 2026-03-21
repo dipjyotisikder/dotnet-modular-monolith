@@ -28,6 +28,60 @@ public class Result
 
     public static Result<T> Failure<T>(string error, string errorCode = ErrorCodes.BUSINESS_RULE_VIOLATION)
         => new(default!, false, error, errorCode);
+
+    public static Result ValidationError(string error)
+        => new(false, error, ErrorCodes.VALIDATION_ERROR);
+
+    public static Result<T> ValidationError<T>(string error)
+        => new(default!, false, error, ErrorCodes.VALIDATION_ERROR);
+
+    public static Result NotFound(string error)
+        => new(false, error, ErrorCodes.RESOURCE_NOT_FOUND);
+
+    public static Result<T> NotFound<T>(string error)
+        => new(default!, false, error, ErrorCodes.RESOURCE_NOT_FOUND);
+
+    public static Result Unauthorized(string error)
+        => new(false, error, ErrorCodes.UNAUTHORIZED);
+
+    public static Result<T> Unauthorized<T>(string error)
+        => new(default!, false, error, ErrorCodes.UNAUTHORIZED);
+
+    public static Result Forbidden(string error)
+        => new(false, error, ErrorCodes.FORBIDDEN);
+
+    public static Result<T> Forbidden<T>(string error)
+        => new(default!, false, error, ErrorCodes.FORBIDDEN);
+
+    public static Result PermissionDenied(string error)
+        => new(false, error, ErrorCodes.PERMISSION_DENIED);
+
+    public static Result<T> PermissionDenied<T>(string error)
+        => new(default!, false, error, ErrorCodes.PERMISSION_DENIED);
+
+    public static Result RequirementFailed(string error)
+        => new(false, error, ErrorCodes.REQUIREMENT_FAILED);
+
+    public static Result<T> RequirementFailed<T>(string error)
+        => new(default!, false, error, ErrorCodes.REQUIREMENT_FAILED);
+
+    public static Result DuplicateResource(string error)
+        => new(false, error, ErrorCodes.DUPLICATE_RESOURCE);
+
+    public static Result<T> DuplicateResource<T>(string error)
+        => new(default!, false, error, ErrorCodes.DUPLICATE_RESOURCE);
+
+    public static Result BusinessRuleViolation(string error)
+        => new(false, error, ErrorCodes.BUSINESS_RULE_VIOLATION);
+
+    public static Result<T> BusinessRuleViolation<T>(string error)
+        => new(default!, false, error, ErrorCodes.BUSINESS_RULE_VIOLATION);
+
+    public static Result Conflict(string error)
+        => new(false, error, ErrorCodes.CONFLICT);
+
+    public static Result<T> Conflict<T>(string error)
+        => new(default!, false, error, ErrorCodes.CONFLICT);
 }
 
 public class Result<T> : Result

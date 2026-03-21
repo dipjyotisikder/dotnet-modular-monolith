@@ -19,36 +19,29 @@ public class LoginCommandHandler(
 {
     public async Task<Result<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var user = await ValidateCredentials(request, cancellationToken);
-            if (user == null)
-                return Result.Failure<LoginResponse>("Invalid email or password", ErrorCodes.UNAUTHORIZED);
+        var user = await ValidateCredentials(request, cancellationToken);
+        if (user == null)
+            return Result.Unauthorized<LoginResponse>("Invalid email or password");
 
-            var deviceResult = await CreateDeviceSessionAndTokens(user, request, cancellationToken);
-            if (deviceResult.IsFailure)
-                return Result.Failure<LoginResponse>(deviceResult.Error, deviceResult.ErrorCode);
+        var deviceResult = await CreateDeviceSessionAndTokens(user, request, cancellationToken);
+        if (deviceResult.IsFailure)
+            return Result.Failure<LoginResponse>(deviceResult.Error, deviceResult.ErrorCode);
 
-            var (device, accessToken, refreshToken) = deviceResult.Value;
+        var (device, accessToken, refreshToken) = deviceResult.Value;
 
-            user.UpdateLastLogin(clock);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+        user.UpdateLastLogin(clock);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var response = new LoginResponse(
-                accessToken,
-                refreshToken,
-                user.Id.ToString(),
-                user.Email,
-                user.Name,
-                user.GetRoles().ToArray(),
-                device.DeviceId);
+        var response = new LoginResponse(
+            accessToken,
+            refreshToken,
+            user.Id.ToString(),
+            user.Email,
+            user.Name,
+            user.GetRoles().ToArray(),
+            device.DeviceId);
 
-            return Result.Success(response);
-        }
-        catch (Exception)
-        {
-            return Result.Failure<LoginResponse>("An error occurred during login", ErrorCodes.INTERNAL_ERROR);
-        }
+        return Result.Success(response);
     }
 
     private async Task<User?> ValidateCredentials(LoginCommand request, CancellationToken cancellationToken)

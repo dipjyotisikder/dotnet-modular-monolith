@@ -14,9 +14,10 @@ public class CompleteBookingEndpoint : IEndpoint
         app.MapGroup("/api/bookings")
             .MapPost("/{bookingId:guid}/complete", CompleteBookingHandler)
             .WithName("CompleteBooking")
-            .RequireAuthorization("AdminPolicy")
+            .RequireAuthorization()
             .WithTags("Bookings")
             .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status403Forbidden)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status400BadRequest);
     }
@@ -26,7 +27,9 @@ public class CompleteBookingEndpoint : IEndpoint
         ISender sender,
         CancellationToken cancellationToken)
     {
-        var result = await sender.Send(new CompleteBookingCommand(bookingId), cancellationToken);
+        var result = await sender.Send(
+            new CompleteBookingCommand(bookingId),
+            cancellationToken);
 
         return ResultToHttpResponseMapper.MapToHttpResponse(result);
     }

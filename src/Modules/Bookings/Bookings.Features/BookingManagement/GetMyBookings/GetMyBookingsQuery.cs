@@ -1,5 +1,9 @@
 using MediatR;
+using Shared.Application.Behaviors;
 using Shared.Domain;
+using Shared.Domain.Authorization;
+using Shared.Domain.Authorization.Requirements;
+using AuthorizationPermission = Shared.Domain.Authorization.Permission;
 
 namespace Bookings.Features.BookingManagement.GetMyBookings;
 
@@ -15,4 +19,12 @@ public record BookingSummary(
     string Status,
     DateTime CreatedAt);
 
-public record GetMyBookingsQuery(Guid GuestId) : IRequest<Result<IEnumerable<BookingSummary>>>;
+public record GetMyBookingsQuery(Guid GuestId) : IRequest<Result<IEnumerable<BookingSummary>>>, IPermissionRequired, IRequirementRequired
+{
+    public string Permission => AuthorizationPermission.BookingRead;
+
+    public IAuthorizationRequirement[] Requirements =>
+    [
+        new ResourceOwnershipRequirement(GuestId)
+    ];
+}

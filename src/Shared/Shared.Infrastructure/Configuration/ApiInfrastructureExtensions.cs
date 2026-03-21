@@ -1,9 +1,9 @@
-namespace Shared.Infrastructure.Configuration;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Infrastructure.Middleware;
+
+namespace Shared.Infrastructure.Configuration;
 
 public static class ApiInfrastructureExtensions
 {
@@ -81,11 +81,6 @@ public static class ApiInfrastructureExtensions
     private static void MapSwaggerUIEndpoints(WebApplication app)
     {
         app.UseSwagger();
-        app.UseSwaggerUI(x =>
-        {
-            x.RoutePrefix = string.Empty;
-            x.SwaggerEndpoint("/swagger/v1/swagger.json", "Monolithic API v1");
-            x.DocumentTitle = "Monolithic API";
-        });
+        app.UseSwaggerUI();
     }
 }

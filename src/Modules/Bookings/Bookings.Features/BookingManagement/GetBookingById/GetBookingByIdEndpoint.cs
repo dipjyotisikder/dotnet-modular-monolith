@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Shared.Domain.Services;
 using Shared.Infrastructure.Endpoints;
 using Shared.Infrastructure.Mappers;
 
@@ -24,15 +23,11 @@ public class GetBookingByIdEndpoint : IEndpoint
 
     private static async Task<IResult> GetBookingByIdHandler(
         Guid bookingId,
-        IUserContext userContext,
         ISender sender,
         CancellationToken cancellationToken)
     {
-        if (!userContext.IsAuthenticated)
-            return Results.Unauthorized();
-
         var result = await sender.Send(
-            new GetBookingByIdQuery(bookingId, userContext.UserId),
+            new GetBookingByIdQuery(bookingId),
             cancellationToken);
 
         return ResultToHttpResponseMapper.MapToHttpResponse(result);

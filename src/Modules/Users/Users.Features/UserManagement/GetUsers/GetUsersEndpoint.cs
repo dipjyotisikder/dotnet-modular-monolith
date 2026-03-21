@@ -14,9 +14,10 @@ public class GetUsersEndpoint : IEndpoint
         app.MapGroup("/api/users")
             .MapGet("/", GetUsersHandler)
             .WithName("GetUsers")
-            .RequireAuthorization("AdminPolicy")
+            .RequireAuthorization("CanListUsers")
             .WithTags("Users")
-            .Produces(StatusCodes.Status200OK);
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status403Forbidden);
     }
 
     private static async Task<IResult> GetUsersHandler(

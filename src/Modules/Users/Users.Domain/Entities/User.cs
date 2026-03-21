@@ -22,7 +22,6 @@ public class User : AuditableEntity
     private int _refreshTokenVersion = 1;
     private DateTime _lastTokenRevokedAt;
 
-    private string _tokenRevocationVersionJson = "";
     public DateTime? LastPasswordChangedAt { get; private set; }
 
     public TokenRevocationVersion TokenRevocationVersion

@@ -6,4 +6,6 @@ public interface IUserContext
     string? UserEmail { get; }
     IReadOnlyList<string> Roles { get; }
     bool IsAuthenticated { get; }
+    string? Tier { get; }
+    IReadOnlyList<string> Permissions { get; }
 }

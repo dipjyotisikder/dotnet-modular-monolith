@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Shared.Domain.Services;
 using Shared.Infrastructure.Endpoints;
 using Shared.Infrastructure.Mappers;
 
@@ -25,16 +24,13 @@ public class CancelBookingEndpoint : IEndpoint
 
     private static async Task<IResult> CancelBookingHandler(
         Guid bookingId,
-        IUserContext userContext,
         ISender sender,
         CancellationToken cancellationToken,
         string reason = "Cancelled by guest")
     {
-        if (!userContext.IsAuthenticated)
-            return Results.Unauthorized();
-
-        var command = new CancelBookingCommand(bookingId, userContext.UserId, reason);
-        var result = await sender.Send(command, cancellationToken);
+        var result = await sender.Send(
+            new CancelBookingCommand(bookingId, reason),
+            cancellationToken);
 
         return ResultToHttpResponseMapper.MapToHttpResponse(result);
     }

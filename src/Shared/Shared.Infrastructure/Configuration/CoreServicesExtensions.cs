@@ -2,6 +2,7 @@ namespace Shared.Infrastructure.Configuration;
 
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Domain.Services;
+using Shared.Infrastructure.Authentication;
 using Shared.Infrastructure.Persistence.Interceptors;
 using Shared.Infrastructure.Services;
 
@@ -11,6 +12,7 @@ public static class CoreServicesExtensions
     {
         AddTimeAbstraction(services);
         AddAuditingServices(services);
+        AddAuthenticationServices(services);
 
         return services;
     }
@@ -24,5 +26,10 @@ public static class CoreServicesExtensions
     {
         services.AddScoped<AuditableEntityInterceptor>();
         services.AddScoped<DomainEventOutboxInterceptor>();
+    }
+
+    private static void AddAuthenticationServices(IServiceCollection services)
+    {
+        services.AddScoped<OAuthClaimsTransformationHandler>();
     }
 }

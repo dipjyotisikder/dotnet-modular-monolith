@@ -1,6 +1,6 @@
+using Microsoft.AspNetCore.Http;
 using Shared.Application.Models;
 using Shared.Domain;
-using Microsoft.AspNetCore.Http;
 
 namespace Shared.Infrastructure.Mappers;
 
@@ -46,8 +46,14 @@ public static class ResultToHttpResponseMapper
             ErrorCodes.RESOURCE_NOT_FOUND => Results.NotFound(CreateErrorResponse(errorMessage, errorCode)),
             ErrorCodes.DUPLICATE_RESOURCE => Results.BadRequest(CreateErrorResponse(errorMessage, errorCode)),
             ErrorCodes.CONFLICT => Results.Conflict(CreateErrorResponse(errorMessage, errorCode)),
-            ErrorCodes.FORBIDDEN => Results.Forbid(),
-            ErrorCodes.UNAUTHORIZED => Results.Unauthorized(),
+            ErrorCodes.FORBIDDEN => Results.Json(
+                CreateErrorResponse(errorMessage, errorCode),
+                statusCode: StatusCodes.Status403Forbidden,
+                contentType: "application/json"),
+            ErrorCodes.UNAUTHORIZED => Results.Json(
+                CreateErrorResponse(errorMessage, errorCode),
+                statusCode: StatusCodes.Status401Unauthorized,
+                contentType: "application/json"),
             ErrorCodes.EXPIRED => Results.BadRequest(CreateErrorResponse(errorMessage, errorCode)),
             ErrorCodes.INVALID_STATE => Results.BadRequest(CreateErrorResponse(errorMessage, errorCode)),
             ErrorCodes.CONCURRENCY_CONFLICT => Results.Conflict(CreateErrorResponse(errorMessage, errorCode)),

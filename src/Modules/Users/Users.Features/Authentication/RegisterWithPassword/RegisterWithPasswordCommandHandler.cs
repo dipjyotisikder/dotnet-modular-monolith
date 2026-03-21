@@ -15,28 +15,21 @@ public class RegisterWithPasswordCommandHandler(
 {
     public async Task<Result<Guid>> Handle(RegisterWithPasswordCommand request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var existingUsers = await userRepository.FindAsync(u => u.Email == request.Email, cancellationToken);
-            if (existingUsers.Any())
-                return Result.Failure<Guid>("Email already exists", ErrorCodes.DUPLICATE_RESOURCE);
+        var existingUsers = await userRepository.FindAsync(u => u.Email == request.Email, cancellationToken);
+        if (existingUsers.Any())
+            return Result.DuplicateResource<Guid>("Email already exists");
 
-            var passwordHash = passwordHasher.HashPassword(request.Password);
+        var passwordHash = passwordHasher.HashPassword(request.Password);
 
-            var userResult = User.Create(request.Email, request.Name, passwordHash);
-            if (userResult.IsFailure)
-                return Result.Failure<Guid>(userResult.Error, userResult.ErrorCode);
+        var userResult = User.Create(request.Email, request.Name, passwordHash);
+        if (userResult.IsFailure)
+            return Result.Failure<Guid>(userResult.Error, userResult.ErrorCode);
 
-            var user = userResult.Value;
+        var user = userResult.Value;
 
-            await userRepository.AddAsync(user, cancellationToken);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+        await userRepository.AddAsync(user, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(user.Id);
-        }
-        catch (Exception)
-        {
-            return Result.Failure<Guid>("An error occurred during registration", ErrorCodes.INTERNAL_ERROR);
-        }
+        return Result.Success(user.Id);
     }
 }

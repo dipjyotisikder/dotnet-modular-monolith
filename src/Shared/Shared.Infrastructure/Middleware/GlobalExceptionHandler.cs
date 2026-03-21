@@ -1,12 +1,13 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Shared.Application.Models;
 using Shared.Domain;
+using Shared.Domain.Authorization;
 using Shared.Domain.Exceptions;
 using Shared.Domain.Validation;
 using System.Text.Json;
-using FluentValidation;
 
 namespace Shared.Infrastructure.Middleware;
 
@@ -26,6 +27,26 @@ public class GlobalExceptionHandler : IExceptionHandler
     {
         var (statusCode, errorResponse) = exception switch
         {
+            AuthenticationRequiredException authReqEx => (
+                StatusCodes.Status401Unauthorized,
+                CreateErrorResponse(authReqEx.Message, authReqEx.ErrorCode, httpContext)
+            ),
+            PermissionDeniedException permissionEx => (
+                StatusCodes.Status403Forbidden,
+                CreateErrorResponse(permissionEx.Message, permissionEx.ErrorCode, httpContext)
+            ),
+            RequirementFailedException requirementEx => (
+                StatusCodes.Status403Forbidden,
+                CreateErrorResponse(requirementEx.Message, requirementEx.ErrorCode, httpContext)
+            ),
+            AuthorizationException authEx => (
+                StatusCodes.Status403Forbidden,
+                CreateErrorResponse(authEx.Message, authEx.ErrorCode, httpContext)
+            ),
+            UnauthorizedAccessException unauthorizedEx => (
+                StatusCodes.Status403Forbidden,
+                CreateErrorResponse(unauthorizedEx.Message, ErrorCodes.FORBIDDEN, httpContext)
+            ),
             ValidationException validationEx => HandleValidationException(validationEx, httpContext),
             BusinessRuleViolationException businessEx => (
                 StatusCodes.Status400BadRequest,
