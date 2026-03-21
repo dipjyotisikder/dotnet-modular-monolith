@@ -2,8 +2,8 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Shared.Domain;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 
 namespace Bookings.Features.BookingManagement.CompleteBooking;
 
@@ -16,7 +16,9 @@ public class CompleteBookingEndpoint : IEndpoint
             .WithName("CompleteBooking")
             .RequireAuthorization("AdminPolicy")
             .WithTags("Bookings")
-            .Produces(StatusCodes.Status200OK);
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status400BadRequest);
     }
 
     private static async Task<IResult> CompleteBookingHandler(
@@ -26,10 +28,6 @@ public class CompleteBookingEndpoint : IEndpoint
     {
         var result = await sender.Send(new CompleteBookingCommand(bookingId), cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Ok(new { message = "Booking completed successfully" })
-            : result.ErrorCode == ErrorCodes.RESOURCE_NOT_FOUND
-                ? Results.NotFound(result.Error)
-                : Results.BadRequest(result.Error);
+        return ResultToHttpResponseMapper.MapToHttpResponse(result);
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 
 namespace Users.Features.UserManagement.CreateUser;
 
@@ -26,8 +27,7 @@ public class CreateUserEndpoint : IEndpoint
         var command = new CreateUserCommand(request.Email, request.Name);
         var result = await sender.Send(command, cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Created($"/api/users/{result.Value}", new { id = result.Value })
-            : Results.BadRequest(result.Error);
+        return ResultToHttpResponseMapper.MapToHttpResponse(result,
+            id => Results.Created($"/api/users/{id}", new { id }));
     }
 }

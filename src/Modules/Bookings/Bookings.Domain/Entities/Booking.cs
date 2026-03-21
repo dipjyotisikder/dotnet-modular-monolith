@@ -1,11 +1,13 @@
 using Bookings.Domain.Enums;
 using Bookings.Domain.Events;
+using Bookings.Domain.Rules;
 using Bookings.Domain.ValueObjects;
 using Shared.Domain;
+using Shared.Domain.Validation;
 
 namespace Bookings.Domain.Entities;
 
-public class Booking : Entity
+public class Booking : AuditableEntity
 {
     public Guid GuestId { get; private set; }
     public Guid HotelId { get; private set; }
@@ -13,7 +15,6 @@ public class Booking : Entity
     public DateRange DateRange { get; private set; } = null!;
     public Money TotalAmount { get; private set; } = null!;
     public BookingStatus Status { get; private set; }
-    public DateTime CreatedAt { get; private set; }
     public DateTime? CancelledAt { get; private set; }
     public string? CancellationReason { get; private set; }
 
@@ -63,14 +64,16 @@ public class Booking : Entity
 
     public Result Cancel(string reason = "Cancelled by guest")
     {
-        if (Status == BookingStatus.Cancelled)
-            return Result.Failure("Booking is already cancelled", ErrorCodes.BUSINESS_RULE_VIOLATION);
-
-        if (Status == BookingStatus.Completed)
-            return Result.Failure("Completed bookings cannot be cancelled", ErrorCodes.BUSINESS_RULE_VIOLATION);
-
-        if (DateRange.CheckIn <= DateTime.UtcNow.Date)
-            return Result.Failure("Cannot cancel a booking on or after the check-in date", ErrorCodes.BUSINESS_RULE_VIOLATION);
+        try
+        {
+            BusinessRuleValidator.CheckRule(new BookingAlreadyCancelledRule(Status));
+            BusinessRuleValidator.CheckRule(new BookingCompletedCannotBeCancelledRule(Status));
+            BusinessRuleValidator.CheckRule(new CannotCancelAfterCheckInRule(DateRange));
+        }
+        catch (BusinessRuleViolationException ex)
+        {
+            return Result.Failure(ex.Message, ex.ErrorCode);
+        }
 
         Status = BookingStatus.Cancelled;
         CancelledAt = DateTime.UtcNow;

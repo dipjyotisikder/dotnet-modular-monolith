@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 
 namespace Users.Features.Authentication.RefreshToken;
 
@@ -26,8 +27,6 @@ public class RefreshTokenEndpoint : IEndpoint
         var command = new RefreshTokenCommand(request.RefreshToken, request.DeviceId);
         var result = await sender.Send(command, cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Ok(result.Value)
-            : Results.Unauthorized();
+        return ResultToHttpResponseMapper.MapToHttpResponse(result);
     }
 }

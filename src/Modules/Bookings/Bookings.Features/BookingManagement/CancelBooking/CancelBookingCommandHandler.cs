@@ -10,27 +10,20 @@ public class CancelBookingCommandHandler(IBookingRepository bookingRepository, I
 {
     public async Task<Result> Handle(CancelBookingCommand request, CancellationToken cancellationToken)
     {
-        try
-        {
-            var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
-            if (booking is null)
-                return Result.Failure("Booking not found", ErrorCodes.RESOURCE_NOT_FOUND);
+        var booking = await bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
+        if (booking is null)
+            return Result.Failure("Booking not found", ErrorCodes.RESOURCE_NOT_FOUND);
 
-            if (!booking.BelongsTo(request.RequestingUserId))
-                return Result.Failure("You are not authorized to cancel this booking", ErrorCodes.FORBIDDEN);
+        if (!booking.BelongsTo(request.RequestingUserId))
+            return Result.Failure("You are not authorized to cancel this booking", ErrorCodes.FORBIDDEN);
 
-            var cancelResult = booking.Cancel(request.Reason);
-            if (cancelResult.IsFailure)
-                return cancelResult;
+        var cancelResult = booking.Cancel(request.Reason);
+        if (cancelResult.IsFailure)
+            return cancelResult;
 
-            bookingRepository.Update(booking);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+        bookingRepository.Update(booking);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success();
-        }
-        catch (Exception)
-        {
-            return Result.Failure("An error occurred while cancelling the booking", ErrorCodes.INTERNAL_ERROR);
-        }
+        return Result.Success();
     }
 }

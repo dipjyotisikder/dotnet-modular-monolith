@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 
 namespace Users.Features.UserManagement.GetUsers;
 
@@ -25,8 +26,6 @@ public class GetUsersEndpoint : IEndpoint
         var query = new GetUsersQuery();
         var result = await sender.Send(query, cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Ok(result.Value)
-            : Results.BadRequest(result.Error);
+        return ResultToHttpResponseMapper.MapToHttpResponse(result);
     }
 }

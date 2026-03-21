@@ -4,13 +4,12 @@ using Users.Domain.ValueObjects;
 
 namespace Users.Domain.Entities;
 
-public class User : Entity
+public class User : AuditableEntity
 {
     public string Email { get; private set; } = string.Empty;
     public string Name { get; private set; } = string.Empty;
     public string? PasswordHash { get; private set; }
     public string Tier { get; private set; } = "free";
-    public DateTime CreatedAt { get; private set; }
     public DateTime? LastLoginAt { get; private set; }
     public bool IsActive { get; private set; } = true;
     public string Roles { get; private set; } = "User";

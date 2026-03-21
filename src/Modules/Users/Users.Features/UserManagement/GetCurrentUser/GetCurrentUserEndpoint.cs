@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 using System.Security.Claims;
 
 namespace Users.Features.UserManagement.GetCurrentUser;
@@ -31,8 +32,6 @@ public class GetCurrentUserEndpoint : IEndpoint
         var query = new GetCurrentUserQuery(userId);
         var result = await sender.Send(query, cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Ok(result.Value)
-            : Results.NotFound();
+        return ResultToHttpResponseMapper.MapToHttpResponse(result);
     }
 }

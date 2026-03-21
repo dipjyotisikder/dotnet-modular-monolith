@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 
 namespace Bookings.Features.HotelManagement.CreateHotel;
 
@@ -34,8 +35,7 @@ public class CreateHotelEndpoint : IEndpoint
 
         var result = await sender.Send(command, cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Created($"/api/hotels/{result.Value}", new { id = result.Value })
-            : Results.BadRequest(result.Error);
+        return ResultToHttpResponseMapper.MapToHttpResponse(result,
+            id => Results.Created($"/api/hotels/{id}", new { id }));
     }
 }

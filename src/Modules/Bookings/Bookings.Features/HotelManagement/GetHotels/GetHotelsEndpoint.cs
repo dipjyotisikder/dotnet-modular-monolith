@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 
 namespace Bookings.Features.HotelManagement.GetHotels;
 
@@ -24,8 +25,6 @@ public class GetHotelsEndpoint : IEndpoint
     {
         var result = await sender.Send(new GetHotelsQuery(), cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Ok(result.Value)
-            : Results.BadRequest(result.Error);
+        return ResultToHttpResponseMapper.MapToHttpResponse(result);
     }
 }

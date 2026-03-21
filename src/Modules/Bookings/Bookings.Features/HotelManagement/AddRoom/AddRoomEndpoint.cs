@@ -2,8 +2,8 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Shared.Domain;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 
 namespace Bookings.Features.HotelManagement.AddRoom;
 
@@ -36,10 +36,7 @@ public class AddRoomEndpoint : IEndpoint
 
         var result = await sender.Send(command, cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Created($"/api/hotels/{hotelId}/rooms/{result.Value}", new { id = result.Value })
-            : result.ErrorCode == ErrorCodes.RESOURCE_NOT_FOUND
-                ? Results.NotFound(result.Error)
-                : Results.BadRequest(result.Error);
+        return ResultToHttpResponseMapper.MapToHttpResponse(result,
+            id => Results.Created($"/api/hotels/{hotelId}/rooms/{id}", new { id }));
     }
 }

@@ -2,9 +2,9 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Shared.Domain;
 using Shared.Domain.Services;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 
 namespace Bookings.Features.BookingManagement.GetBookingById;
 
@@ -17,7 +17,9 @@ public class GetBookingByIdEndpoint : IEndpoint
             .WithName("GetBookingById")
             .RequireAuthorization()
             .WithTags("Bookings")
-            .Produces(StatusCodes.Status200OK);
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status403Forbidden);
     }
 
     private static async Task<IResult> GetBookingByIdHandler(
@@ -33,12 +35,6 @@ public class GetBookingByIdEndpoint : IEndpoint
             new GetBookingByIdQuery(bookingId, userContext.UserId),
             cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Ok(result.Value)
-            : result.ErrorCode == ErrorCodes.RESOURCE_NOT_FOUND
-                ? Results.NotFound(result.Error)
-                : result.ErrorCode == ErrorCodes.FORBIDDEN
-                    ? Results.Forbid()
-                    : Results.BadRequest(result.Error);
+        return ResultToHttpResponseMapper.MapToHttpResponse(result);
     }
 }

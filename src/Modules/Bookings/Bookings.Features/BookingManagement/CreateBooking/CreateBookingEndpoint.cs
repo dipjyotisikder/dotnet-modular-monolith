@@ -2,9 +2,9 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Shared.Domain;
 using Shared.Domain.Services;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 
 namespace Bookings.Features.BookingManagement.CreateBooking;
 
@@ -17,7 +17,9 @@ public class CreateBookingEndpoint : IEndpoint
             .WithName("CreateBooking")
             .RequireAuthorization()
             .WithTags("Bookings")
-            .Produces(StatusCodes.Status201Created);
+            .Produces(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status404NotFound);
     }
 
     private static async Task<IResult> CreateBookingHandler(
@@ -38,10 +40,8 @@ public class CreateBookingEndpoint : IEndpoint
 
         var result = await sender.Send(command, cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Created($"/api/bookings/{result.Value}", new { id = result.Value })
-            : result.ErrorCode == ErrorCodes.RESOURCE_NOT_FOUND
-                ? Results.NotFound(result.Error)
-                : Results.BadRequest(result.Error);
+        return ResultToHttpResponseMapper.MapToHttpResponse(
+            result,
+            id => Results.Created($"/api/bookings/{id}", new { id }));
     }
 }

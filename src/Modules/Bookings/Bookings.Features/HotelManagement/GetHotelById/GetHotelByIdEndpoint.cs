@@ -2,8 +2,8 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Shared.Domain;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 
 namespace Bookings.Features.HotelManagement.GetHotelById;
 
@@ -26,10 +26,6 @@ public class GetHotelByIdEndpoint : IEndpoint
     {
         var result = await sender.Send(new GetHotelByIdQuery(hotelId), cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Ok(result.Value)
-            : result.ErrorCode == ErrorCodes.RESOURCE_NOT_FOUND
-                ? Results.NotFound(result.Error)
-                : Results.BadRequest(result.Error);
+        return ResultToHttpResponseMapper.MapToHttpResponse(result);
     }
 }

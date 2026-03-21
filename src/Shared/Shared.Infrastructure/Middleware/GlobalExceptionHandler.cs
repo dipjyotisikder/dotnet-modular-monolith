@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Shared.Application.Models;
 using Shared.Domain;
 using Shared.Domain.Exceptions;
 using Shared.Domain.Validation;
 using System.Text.Json;
+using FluentValidation;
 
 namespace Shared.Infrastructure.Middleware;
 
@@ -23,65 +24,101 @@ public class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        var problemDetails = exception switch
+        var (statusCode, errorResponse) = exception switch
         {
-            DomainException domainException => new ProblemDetails
-            {
-                Status = StatusCodes.Status400BadRequest,
-                Title = "Domain Error",
-                Detail = domainException.Message,
-                Extensions = new Dictionary<string, object?>
-                {
-                    ["errorCode"] = domainException.ErrorCode
-                }
-            },
-            BusinessRuleViolationException businessRuleException => new ProblemDetails
-            {
-                Status = StatusCodes.Status400BadRequest,
-                Title = "Business Rule Violation",
-                Detail = businessRuleException.Message,
-                Extensions = new Dictionary<string, object?>
-                {
-                    ["errorCode"] = businessRuleException.ErrorCode
-                }
-            },
-            ArgumentException argumentException => new ProblemDetails
-            {
-                Status = StatusCodes.Status400BadRequest,
-                Title = "Validation Error",
-                Detail = argumentException.Message,
-                Extensions = new Dictionary<string, object?>
-                {
-                    ["errorCode"] = ErrorCodes.VALIDATION_ERROR
-                }
-            },
-            _ => new ProblemDetails
-            {
-                Status = StatusCodes.Status500InternalServerError,
-                Title = "Internal Server Error",
-                Detail = "An unexpected error occurred. Please try again later.",
-                Extensions = new Dictionary<string, object?>
-                {
-                    ["errorCode"] = ErrorCodes.INTERNAL_ERROR
-                }
-            }
+            ValidationException validationEx => HandleValidationException(validationEx, httpContext),
+            BusinessRuleViolationException businessEx => (
+                StatusCodes.Status400BadRequest,
+                CreateErrorResponse(businessEx.Message, businessEx.ErrorCode, httpContext)
+            ),
+            DomainException domainEx => (
+                StatusCodes.Status400BadRequest,
+                CreateErrorResponse(domainEx.Message, domainEx.ErrorCode, httpContext)
+            ),
+            ArgumentException argEx => (
+                StatusCodes.Status400BadRequest,
+                CreateErrorResponse(argEx.Message, ErrorCodes.VALIDATION_ERROR, httpContext)
+            ),
+            InvalidOperationException invalidEx => (
+                StatusCodes.Status400BadRequest,
+                CreateErrorResponse(invalidEx.Message, ErrorCodes.INVALID_STATE, httpContext)
+            ),
+            TimeoutException => (
+                StatusCodes.Status408RequestTimeout,
+                CreateErrorResponse("Request timeout", ErrorCodes.TIMEOUT, httpContext)
+            ),
+            OperationCanceledException => (
+                StatusCodes.Status408RequestTimeout,
+                CreateErrorResponse("Request cancelled", ErrorCodes.TIMEOUT, httpContext)
+            ),
+            OutOfMemoryException => (
+                StatusCodes.Status507InsufficientStorage,
+                CreateErrorResponse("System resource exhausted", ErrorCodes.RESOURCE_EXHAUSTED, httpContext)
+            ),
+            IOException ioEx => (
+                StatusCodes.Status507InsufficientStorage,
+                CreateErrorResponse(ioEx.Message, ErrorCodes.RESOURCE_EXHAUSTED, httpContext)
+            ),
+            HttpRequestException => (
+                StatusCodes.Status502BadGateway,
+                CreateErrorResponse("External service error", ErrorCodes.EXTERNAL_SERVICE_ERROR, httpContext)
+            ),
+            _ => (
+                StatusCodes.Status500InternalServerError,
+                CreateErrorResponse("Internal server error", ErrorCodes.INTERNAL_ERROR, httpContext)
+            )
         };
 
-        _logger.LogError(exception,
-            "Exception occurred: {Message}. Type: {ExceptionType}",
-            exception.Message,
-            exception.GetType().Name);
+        LogException(exception, statusCode);
 
-        httpContext.Response.StatusCode = problemDetails.Status ?? StatusCodes.Status500InternalServerError;
-        httpContext.Response.ContentType = "application/problem+json";
+        httpContext.Response.StatusCode = statusCode;
+        httpContext.Response.ContentType = "application/json";
 
-        var json = JsonSerializer.Serialize(problemDetails, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        });
+        var json = JsonSerializer.Serialize(
+            new ApiResponseModel
+            {
+                Success = false,
+                Message = errorResponse.Message,
+                Errors = errorResponse.Errors
+            },
+            new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
         await httpContext.Response.WriteAsync(json, cancellationToken);
 
         return true;
+    }
+
+    private (int, ErrorResponse) HandleValidationException(ValidationException ex, HttpContext context)
+    {
+        var errors = ex.Errors
+            .GroupBy(e => e.PropertyName)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(e => e.ErrorMessage).ToArray());
+
+        return (StatusCodes.Status400BadRequest, new ErrorResponse
+        {
+            ErrorCode = ErrorCodes.VALIDATION_ERROR,
+            Message = "Validation failed",
+            Errors = errors,
+            TraceId = context.TraceIdentifier
+        });
+    }
+
+    private ErrorResponse CreateErrorResponse(
+        string message,
+        string errorCode,
+        HttpContext context) => new()
+        {
+            ErrorCode = errorCode,
+            Message = message,
+            TraceId = context.TraceIdentifier
+        };
+
+    private void LogException(Exception exception, int statusCode)
+    {
+        var level = statusCode >= 500 ? LogLevel.Error : LogLevel.Warning;
+        _logger.Log(level, exception, "Exception: {Message} | Status: {StatusCode} | Type: {ExceptionType}",
+            exception.Message, statusCode, exception.GetType().Name);
     }
 }

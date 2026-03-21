@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Shared.Infrastructure.Endpoints;
+using Shared.Infrastructure.Mappers;
 
 namespace Users.Features.DeviceManagement.RevokeDevice;
 
@@ -27,9 +28,7 @@ public class RevokeDeviceEndpoint : IEndpoint
         var command = new RevokeDeviceCommand(deviceId, request.Reason ?? "User initiated");
         var result = await sender.Send(command, cancellationToken);
 
-        return result.IsSuccess
-            ? Results.Ok()
-            : Results.BadRequest(result.Error);
+        return ResultToHttpResponseMapper.MapToHttpResponse(result);
     }
 }
 
