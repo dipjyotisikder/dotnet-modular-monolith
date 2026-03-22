@@ -2,11 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Seeding;
 using Users.Domain.Entities;
 using Users.Infrastructure.Persistence;
-using Users.Infrastructure.Repositories;
 
 namespace Users.Infrastructure.Seeding;
 
-internal class UserSeeder(UsersDbContext dbContext, UsersUnitOfWork unitOfWork) : Seeder
+internal class UserSeeder(UsersDbContext dbContext) : Seeder
 {
     public override int Priority => 0;
 
@@ -33,6 +32,6 @@ internal class UserSeeder(UsersDbContext dbContext, UsersUnitOfWork unitOfWork) 
             }
         }
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

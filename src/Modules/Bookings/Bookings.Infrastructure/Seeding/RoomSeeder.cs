@@ -2,13 +2,12 @@ using Bookings.Domain.Entities;
 using Bookings.Domain.Enums;
 using Bookings.Domain.ValueObjects;
 using Bookings.Infrastructure.Persistence;
-using Bookings.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure.Seeding;
 
 namespace Bookings.Infrastructure.Seeding;
 
-internal class RoomSeeder(BookingsDbContext dbContext, BookingsUnitOfWork unitOfWork) : Seeder
+internal class RoomSeeder(BookingsDbContext dbContext) : Seeder
 {
     public override int Priority => 2;
 
@@ -62,6 +61,6 @@ internal class RoomSeeder(BookingsDbContext dbContext, BookingsUnitOfWork unitOf
         if (roomsToAdd.Count != 0)
             await dbContext.Rooms.AddRangeAsync(roomsToAdd, cancellationToken);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }
