@@ -1,4 +1,3 @@
-using Shared.Domain.Authorization;
 using Shared.Domain.Authorization.Requirements;
 
 namespace Shared.Domain.Authorization.Handlers;

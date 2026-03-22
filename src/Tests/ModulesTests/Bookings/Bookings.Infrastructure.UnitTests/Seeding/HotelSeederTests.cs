@@ -1,6 +1,5 @@
 using Bookings.Infrastructure.Persistence;
 using Bookings.Infrastructure.Repositories;
-using Bookings.Infrastructure.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Shared.Infrastructure.Persistence.Interceptors;

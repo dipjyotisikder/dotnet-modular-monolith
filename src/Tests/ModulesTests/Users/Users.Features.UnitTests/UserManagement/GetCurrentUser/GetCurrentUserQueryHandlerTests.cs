@@ -91,7 +91,8 @@ public class GetCurrentUserQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_EmptyGuidUserIdAndUserNotFound_ReturnsFailureWithUserNotFound(){
+    public async Task Handle_EmptyGuidUserIdAndUserNotFound_ReturnsFailureWithUserNotFound()
+    {
         var userId = Guid.Empty;
         var mockRepository = new Mock<IUserRepository>();
         mockRepository

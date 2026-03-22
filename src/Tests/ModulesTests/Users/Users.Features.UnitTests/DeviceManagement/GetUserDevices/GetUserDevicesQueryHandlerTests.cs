@@ -1,5 +1,4 @@
 using Moq;
-using Shared.Domain;
 using Users.Domain.Entities;
 using Users.Domain.Repositories;
 using Users.Features.DeviceManagement.GetUserDevices;

@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Shared.Domain.Authorization;
 using Shared.Domain.Services;
 
