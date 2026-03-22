@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Shared.Infrastructure.Repositories;
 
-public class Repository<T>(DbContext context) : IRepository<T> where T : class
+public abstract class Repository<T>(DbContext context) : IRepository<T> where T : class
 {
     private readonly DbSet<T> _set = context.Set<T>();
 
