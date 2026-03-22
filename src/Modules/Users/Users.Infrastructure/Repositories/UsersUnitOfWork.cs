@@ -65,5 +65,6 @@ public class UsersUnitOfWork(UsersDbContext context) : IUnitOfWork
             _transaction = null;
         }
         await context.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 }

@@ -65,5 +65,6 @@ public class BookingsUnitOfWork(BookingsDbContext context) : IUnitOfWork
             _transaction = null;
         }
         await context.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 }
