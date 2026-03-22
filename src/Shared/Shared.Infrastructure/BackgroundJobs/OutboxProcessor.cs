@@ -60,7 +60,7 @@ public class OutboxProcessor(
         try
         {
             var pending = await outboxDb.OutboxMessages
-                .Where(m => m.ShouldRetry(_outboxOptions.MaxRetries))
+                .Where(m => !m.Sent && !m.IsDeadLettered && m.RetryCount < _outboxOptions.MaxRetries)
                 .OrderBy(m => m.CreatedAt)
                 .Take(_outboxOptions.BatchSize)
                 .ToListAsync(ct);
