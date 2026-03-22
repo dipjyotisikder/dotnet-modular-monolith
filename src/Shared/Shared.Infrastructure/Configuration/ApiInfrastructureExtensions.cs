@@ -44,12 +44,7 @@ public static class ApiInfrastructureExtensions
             {
                 Title = "Monolithic API",
                 Version = "v1",
-                Description = "Clean Architecture + CQRS + DDD + JWT Auth + OAuth",
-                Contact = new()
-                {
-                    Name = "Monolith Admin",
-                    Url = new Uri("https://github.com/dipjyotisikder")
-                }
+                Description = "Clean Architecture + CQRS + DDD + JWT Auth + OAuth"
             });
         });
     }
