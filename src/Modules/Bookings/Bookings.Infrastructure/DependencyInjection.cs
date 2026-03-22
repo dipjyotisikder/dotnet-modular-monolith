@@ -15,11 +15,10 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<BookingsDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
-
+        services.AddDbContext<BookingsDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
         services.AddRepositoriesFromAssembly(typeof(DependencyInjection).Assembly);
         services.AddScoped<IUnitOfWork, BookingsUnitOfWork>();
+
         services.AddSeeding(typeof(DependencyInjection).Assembly);
 
         return services;

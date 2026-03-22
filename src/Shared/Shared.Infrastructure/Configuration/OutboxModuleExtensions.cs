@@ -15,7 +15,6 @@ public static class OutboxModuleExtensions
         IConfiguration configuration)
     {
         services.AddDbContext<OutboxDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
-
         services.AddRepositoriesFromAssembly(typeof(OutboxModuleExtensions).Assembly);
 
         services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();

@@ -12,8 +12,7 @@ public static class DistributedLocksModuleExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<DistributedLocksDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<DistributedLocksDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IDistributedLockFactory, DatabaseDistributedLockFactory>();
 

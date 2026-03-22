@@ -25,18 +25,6 @@ public static class ValidationMessages
             public const string ClientIdRequired = "GoogleClientIdIsRequiredWhenEnabled";
             public const string ClientSecretRequired = "GoogleClientSecretIsRequiredWhenEnabled";
         }
-
-        public static class Microsoft
-        {
-            public const string ClientIdRequired = "MicrosoftClientIdIsRequiredWhenEnabled";
-            public const string ClientSecretRequired = "MicrosoftClientSecretIsRequiredWhenEnabled";
-        }
-
-        public static class GitHub
-        {
-            public const string ClientIdRequired = "GitHubClientIdIsRequiredWhenEnabled";
-            public const string ClientSecretRequired = "GitHubClientSecretIsRequiredWhenEnabled";
-        }
     }
 
     public static class Outbox

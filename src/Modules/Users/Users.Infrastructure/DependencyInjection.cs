@@ -20,14 +20,11 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<UsersDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
-
-        services.Configure<PasswordHasherOptions>(
-            configuration.GetSection("PasswordHasher"));
-
+        services.AddDbContext<UsersDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
         services.AddRepositoriesFromAssembly(typeof(DependencyInjection).Assembly);
         services.AddScoped<IUnitOfWork, UsersUnitOfWork>();
+
+        services.Configure<PasswordHasherOptions>(configuration.GetSection("PasswordHasher"));
 
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
