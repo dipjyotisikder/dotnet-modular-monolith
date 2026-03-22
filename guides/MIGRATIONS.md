@@ -2,12 +2,12 @@
 
 ## DbContexts
 
-| Module | DbContext | Migrations Folder |
-|--------|-----------|-------------------|
-| Users | UsersDbContext | `src/Modules/Users/Users.Infrastructure/Persistence/Migrations` |
-| Bookings | BookingsDbContext | `src/Modules/Bookings/Bookings.Infrastructure/Persistence/Migrations` |
-| Shared (Outbox) | OutboxDbContext | `src/Shared/Shared.Infrastructure/Persistence/Migrations/Outbox` |
-| Shared (Locks) | DistributedLocksDbContext | `src/Shared/Shared.Infrastructure/Persistence/Migrations/Locks` |
+| Module          | DbContext                 | Migrations Folder                                                     |
+| --------------- | ------------------------- | --------------------------------------------------------------------- |
+| Users           | UsersDbContext            | `src/Modules/Users/Users.Infrastructure/Persistence/Migrations`       |
+| Bookings        | BookingsDbContext         | `src/Modules/Bookings/Bookings.Infrastructure/Persistence/Migrations` |
+| Shared (Outbox) | OutboxDbContext           | `src/Shared/Shared.Infrastructure/Persistence/Migrations/Outbox`      |
+| Shared (Locks)  | DistributedLocksDbContext | `src/Shared/Shared.Infrastructure/Persistence/Migrations/Locks`       |
 
 ## Setup
 
@@ -20,12 +20,14 @@ dotnet tool install --global dotnet-ef
 ## Quick Start
 
 Add migration to all contexts:
+
 ```powershell
-cd d:\Source\Maintained\monolithic
+cd drive:\**\monolithic
 .\scripts\manage-migrations.ps1 -Action add -MigrationName "InitialCreate"
 ```
 
 Add migration to specific context:
+
 ```powershell
 .\scripts\manage-migrations.ps1 -Action add -MigrationName "AddUserFeature" -Context users
 .\scripts\manage-migrations.ps1 -Action add -MigrationName "AddUserFeature" -Context bookings
@@ -34,16 +36,19 @@ Add migration to specific context:
 ```
 
 Update all databases:
+
 ```powershell
 .\scripts\manage-migrations.ps1 -Action update
 ```
 
 Update specific database:
+
 ```powershell
 .\scripts\manage-migrations.ps1 -Action update -Context users
 ```
 
 Remove last migration:
+
 ```powershell
 .\scripts\manage-migrations.ps1 -Action remove -Context bookings
 ```
@@ -57,6 +62,7 @@ dotnet run --project src/AppHost
 ```
 
 All DbContext migrations are applied in order:
+
 1. OutboxDbContext
 2. DistributedLocksDbContext
 3. UsersDbContext
@@ -69,6 +75,7 @@ No manual database updates needed in development.
 Direct EF Core commands (alternative to script):
 
 **Users Module:**
+
 ```powershell
 dotnet ef migrations add InitialCreate `
   --project src/Modules/Users/Users.Infrastructure `
@@ -78,6 +85,7 @@ dotnet ef migrations add InitialCreate `
 ```
 
 **Bookings Module:**
+
 ```powershell
 dotnet ef migrations add InitialCreate `
   --project src/Modules/Bookings/Bookings.Infrastructure `
@@ -87,6 +95,7 @@ dotnet ef migrations add InitialCreate `
 ```
 
 **Outbox:**
+
 ```powershell
 dotnet ef migrations add InitialCreate `
   --project src/Shared/Shared.Infrastructure `
@@ -96,6 +105,7 @@ dotnet ef migrations add InitialCreate `
 ```
 
 **Distributed Locks:**
+
 ```powershell
 dotnet ef migrations add InitialCreate `
   --project src/Shared/Shared.Infrastructure `
@@ -127,5 +137,5 @@ if (app.Environment.IsDevelopment())
 ## Files
 
 - Migration Extension: `src/AppHost/Infrastructure/Persistence/MigrationExtensions.cs`
-- Startup Configuration: `src/AppHost/Program.cs`  
+- Startup Configuration: `src/AppHost/Program.cs`
 - Management Script: `scripts/manage-migrations.ps1`
