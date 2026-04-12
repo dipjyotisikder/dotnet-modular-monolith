@@ -6,8 +6,7 @@ using System.Reflection;
 
 public static class RepositoryExtensions
 {
-    public static IServiceCollection AddRepositoriesFromAssembly(
-        this IServiceCollection services,
+    public static void AddRepositoriesFromAssembly(this IServiceCollection services,
         Assembly assembly)
     {
         var repositoryInterfaceType = typeof(IRepository<>);
@@ -46,7 +45,5 @@ public static class RepositoryExtensions
                 services.AddScoped(customInterface, implementation);
             }
         }
-
-        return services;
     }
 }

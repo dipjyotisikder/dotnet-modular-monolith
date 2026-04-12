@@ -10,8 +10,7 @@ using Shared.Infrastructure.Persistence;
 
 public static class OutboxModuleExtensions
 {
-    public static IServiceCollection AddOutboxModule(
-        this IServiceCollection services,
+    public static void AddOutboxModule(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddDbContext<OutboxDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
@@ -25,7 +24,5 @@ public static class OutboxModuleExtensions
             services.AddHostedService<OutboxProcessor>();
             services.AddHostedService<OutboxCleanupJob>();
         }
-
-        return services;
     }
 }

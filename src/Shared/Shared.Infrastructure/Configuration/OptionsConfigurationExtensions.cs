@@ -7,9 +7,9 @@ namespace Shared.Infrastructure.Configuration;
 
 public static class OptionsConfigurationExtensions
 {
-    public static IServiceCollection AddOptionsConfiguration(this IServiceCollection services, IConfiguration configuration)
+    public static void AddOptionsConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddOptionsValidatorsAsStingletonFromAssemblyContaining<CorsOptionsValidator>();
+        services.AddOptionsValidatorsAsSingletonFromAssemblyContaining<CorsOptionsValidator>();
 
         services.AddOptions<JwtOptions>()
             .Bind(configuration.GetSection(JwtOptions.SectionName))
@@ -35,7 +35,5 @@ public static class OptionsConfigurationExtensions
             .Bind(configuration.GetSection(OAuthOptions.SectionName))
             .ValidateFluentValidation()
             .ValidateOnStart();
-
-        return services;
     }
 }

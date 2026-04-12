@@ -5,8 +5,7 @@ namespace Shared.Infrastructure.Endpoints;
 
 public static class EndpointExtensions
 {
-    public static IEndpointRouteBuilder MapEndpointsFromAssembly(
-        this IEndpointRouteBuilder app,
+    public static void MapEndpointsFromAssembly(this IEndpointRouteBuilder app,
         Assembly assembly)
     {
         var endpointType = typeof(IEndpoint);
@@ -16,13 +15,10 @@ public static class EndpointExtensions
                         endpointType.IsAssignableFrom(t))
             .ToList();
 
-        foreach (var implementation in endpointImplementations)
+        foreach (var instance in endpointImplementations.Select(Activator.CreateInstance))
         {
-            var instance = Activator.CreateInstance(implementation);
             if (instance is IEndpoint endpoint)
                 endpoint.MapEndpoint(app);
         }
-
-        return app;
     }
 }

@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi;
 using Shared.Infrastructure.Middleware;
 
 namespace Shared.Infrastructure.Configuration;
 
 public static class ApiInfrastructureExtensions
 {
-    public static IServiceCollection AddApiInfrastructure(this IServiceCollection services)
+    public static void AddApiInfrastructure(this IServiceCollection services)
     {
         services.AddEndpointsApiExplorer();
         services.AddRateLimiter(_ => { });
@@ -19,28 +20,24 @@ public static class ApiInfrastructureExtensions
 
         services.AddAuthorizationBuilder()
             .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
-
-        return services;
     }
 
-    public static WebApplication UseApiInfrastructure(this WebApplication app)
+    public static void UseApiInfrastructure(this WebApplication app)
     {
         app.UseExceptionHandler();
         app.UseCors(CorsConfiguration.DefaultPolicy);
-        MapSwaggerUIEndpoints(app);
+        MapSwaggerUiEndpoints(app);
         app.UseRateLimiter();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapHealthChecks("/health").AllowAnonymous();
-
-        return app;
     }
 
     private static void RegisterSwaggerDocumentation(IServiceCollection services)
     {
         services.AddSwaggerGen(options =>
         {
-            options.SwaggerDoc("v1", new()
+            options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "Monolithic API",
                 Version = "v1",
@@ -73,7 +70,7 @@ public static class ApiInfrastructureExtensions
         });
     }
 
-    private static void MapSwaggerUIEndpoints(WebApplication app)
+    private static void MapSwaggerUiEndpoints(WebApplication app)
     {
         app.UseSwagger();
         app.UseSwaggerUI();

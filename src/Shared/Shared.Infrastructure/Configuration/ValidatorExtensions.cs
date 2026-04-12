@@ -7,37 +7,35 @@ using System.Reflection;
 
 public static class ValidatorExtensions
 {
-    public static IServiceCollection AddOptionsValidatorsAsSingleton(
-        this IServiceCollection services,
-        Assembly assembly)
+    extension(IServiceCollection services)
     {
-        var validatorType = typeof(IValidator<>);
-
-        var validators = assembly.GetTypes()
-            .Where(t => !t.IsAbstract && !t.IsInterface)
-            .Where(t => typeof(IOptionsValidator).IsAssignableFrom(t))
-            .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == validatorType))
-            .ToList();
-
-        foreach (var validator in validators)
+        public void AddOptionsValidatorsAsSingletonFromAssemblyContaining<T>()
+            where T : class, IOptionsValidator
         {
-            var validatorInterfaces = validator.GetInterfaces()
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == validatorType)
+            services.AddOptionsValidatorsAsSingleton(typeof(T).Assembly);
+        }
+        
+        private void AddOptionsValidatorsAsSingleton(Assembly assembly)
+        {
+            var validatorType = typeof(IValidator<>);
+
+            var validators = assembly.GetTypes()
+                .Where(t => t is { IsAbstract: false, IsInterface: false })
+                .Where(t => typeof(IOptionsValidator).IsAssignableFrom(t))
+                .Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == validatorType))
                 .ToList();
 
-            foreach (var validatorInterface in validatorInterfaces)
+            foreach (var validator in validators)
             {
-                services.AddSingleton(validatorInterface, validator);
+                var validatorInterfaces = validator.GetInterfaces()
+                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == validatorType)
+                    .ToList();
+
+                foreach (var validatorInterface in validatorInterfaces)
+                {
+                    services.AddSingleton(validatorInterface, validator);
+                }
             }
         }
-
-        return services;
-    }
-
-    public static IServiceCollection AddOptionsValidatorsAsStingletonFromAssemblyContaining<T>(
-        this IServiceCollection services)
-        where T : class, IOptionsValidator
-    {
-        return AddOptionsValidatorsAsSingleton(services, typeof(T).Assembly);
     }
 }

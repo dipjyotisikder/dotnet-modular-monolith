@@ -1,5 +1,5 @@
 using Bookings.Infrastructure.Persistence;
-using Bookings.Infrastructure.Repositories;
+using Bookings.Infrastructure.Seeding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -19,8 +19,7 @@ public class RoomSeederTests
         var mockAuditableInterceptor = new Mock<AuditableEntityInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IUserContext>());
         var mockDomainEventOutboxInterceptor = new Mock<DomainEventOutboxInterceptor>(Mock.Of<ISystemClock>(), Mock.Of<IServiceScopeFactory>());
         var dbContext = new BookingsDbContext(options, mockAuditableInterceptor.Object, mockDomainEventOutboxInterceptor.Object);
-        var unitOfWork = new BookingsUnitOfWork(dbContext);
-        var seeder = new RoomSeeder(dbContext, unitOfWork);
+        var seeder = new RoomSeeder(dbContext);
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
 
@@ -30,7 +29,7 @@ public class RoomSeederTests
     [Fact]
     public void Priority_ReturnsExpectedValue()
     {
-        var seeder = new RoomSeeder(null!, null!);
+        var seeder = new RoomSeeder(null!);
 
         var priority = seeder.Priority;
 
@@ -41,14 +40,13 @@ public class RoomSeederTests
     public void Priority_WhenAccessed_ReturnsTwo()
     {
         var options = new DbContextOptionsBuilder<BookingsDbContext>().UseInMemoryDatabase(databaseName: "TestDb").Options;
-        var mockClock = new Mock<Shared.Domain.Services.ISystemClock>();
-        var mockUserContext = new Mock<Shared.Domain.Services.IUserContext>();
-        var mockServiceScopeFactory = new Mock<Microsoft.Extensions.DependencyInjection.IServiceScopeFactory>();
-        var auditInterceptor = new Shared.Infrastructure.Persistence.Interceptors.AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
-        var domainEventInterceptor = new Shared.Infrastructure.Persistence.Interceptors.DomainEventOutboxInterceptor(mockClock.Object, mockServiceScopeFactory.Object);
+        var mockClock = new Mock<ISystemClock>();
+        var mockUserContext = new Mock<IUserContext>();
+        var mockServiceScopeFactory = new Mock<IServiceScopeFactory>();
+        var auditInterceptor = new AuditableEntityInterceptor(mockClock.Object, mockUserContext.Object);
+        var domainEventInterceptor = new DomainEventOutboxInterceptor(mockClock.Object, mockServiceScopeFactory.Object);
         var dbContext = new BookingsDbContext(options, auditInterceptor, domainEventInterceptor);
-        var mockUnitOfWork = new Mock<BookingsUnitOfWork>(dbContext);
-        var roomSeeder = new RoomSeeder(dbContext, mockUnitOfWork.Object);
+        var roomSeeder = new RoomSeeder(dbContext);
 
         var result = roomSeeder.Priority;
 

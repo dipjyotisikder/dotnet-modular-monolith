@@ -9,11 +9,13 @@ public class Result
 
     protected Result(bool isSuccess, string error, string errorCode = ErrorCodes.BUSINESS_RULE_VIOLATION)
     {
-        if (isSuccess && !string.IsNullOrEmpty(error))
-            throw new InvalidOperationException("Successful result cannot have an error");
-
-        if (!isSuccess && string.IsNullOrEmpty(error))
-            throw new InvalidOperationException("Failed result must have an error");
+        switch (isSuccess)
+        {
+            case true when !string.IsNullOrEmpty(error):
+                throw new InvalidOperationException("Successful result cannot have an error");
+            case false when string.IsNullOrEmpty(error):
+                throw new InvalidOperationException("Failed result must have an error");
+        }
 
         IsSuccess = isSuccess;
         Error = error;

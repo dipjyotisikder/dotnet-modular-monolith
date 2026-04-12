@@ -2,19 +2,17 @@ namespace Shared.Infrastructure.Configuration;
 
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Domain.Services;
-using Shared.Infrastructure.Authentication;
-using Shared.Infrastructure.Persistence.Interceptors;
-using Shared.Infrastructure.Services;
+using Authentication;
+using Persistence.Interceptors;
+using Services;
 
 public static class CoreServicesExtensions
 {
-    public static IServiceCollection AddCoreServices(this IServiceCollection services)
+    public static void AddCoreServices(this IServiceCollection services)
     {
         AddTimeAbstraction(services);
         AddAuditingServices(services);
         AddAuthenticationServices(services);
-
-        return services;
     }
 
     private static void AddTimeAbstraction(IServiceCollection services)

@@ -22,13 +22,11 @@ internal class HotelSeeder(BookingsDbContext dbContext) : Seeder
         foreach (var data in seedData)
         {
             var existingHotel = await dbContext.Hotels.FirstOrDefaultAsync(h => h.Name == data.Name, cancellationToken);
-
-            if (existingHotel == null)
-            {
-                var hotel = Hotel.Create(data.Name, data.Description, data.Stars,
-                    Address.Create(data.Street, data.City, data.Country, data.ZipCode).Value).Value;
-                await dbContext.Hotels.AddAsync(hotel, cancellationToken);
-            }
+            if (existingHotel != null) continue;
+            
+            var hotel = Hotel.Create(data.Name, data.Description, data.Stars,
+                Address.Create(data.Street, data.City, data.Country, data.ZipCode).Value).Value;
+            await dbContext.Hotels.AddAsync(hotel, cancellationToken);
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);

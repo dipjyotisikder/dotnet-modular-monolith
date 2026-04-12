@@ -10,8 +10,7 @@ namespace Shared.Infrastructure.Configuration;
 
 public static class AuthenticationConfigurationExtensions
 {
-    public static IServiceCollection AddAuthenticationConfiguration(
-        this IServiceCollection services,
+    public static void AddAuthenticationConfiguration(this IServiceCollection services,
         IConfiguration configuration)
     {
         var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
@@ -54,7 +53,5 @@ public static class AuthenticationConfigurationExtensions
         }
 
         services.AddAuthorization();
-
-        return services;
     }
 }
